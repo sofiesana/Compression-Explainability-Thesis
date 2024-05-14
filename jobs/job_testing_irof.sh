@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=attempt1
-#SBATCH --time=00:05:00
+#SBATCH --time=00:03:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=1
-#SBATCH --mem=4GB
+#SBATCH --mem=2GB
 
 # remove all previously loaded modules
 module purge
