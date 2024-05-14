@@ -221,7 +221,7 @@ if __name__ == "__main__":
 
     ## To save:
     masked_pixels = Image.fromarray(np.repeat(class_mask_uint8[:, :, None], 3, axis=-1))
-    masked_pixels.save(os.join(RESULTS_ROOT, img_name+'predicted_mask_'+seg_class+'.jpg'))
+    masked_pixels.save(os.path.join(RESULTS_ROOT, img_name+'predicted_mask_'+seg_class+'.jpg'))
     print("masked save location:", RESULTS_ROOT, img_name+'predicted_mask_'+seg_class+'.jpg')
 
     og_img = (image.cpu().squeeze().permute(1,2,0).numpy())
@@ -236,7 +236,7 @@ if __name__ == "__main__":
 
     ## To save:
     cam_image_final = Image.fromarray(cam_image)
-    cam_image_final.save(os.join(RESULTS_ROOT, img_name+'grad_cam_'+seg_class+'.jpg'))
+    cam_image_final.save(os.path.join(RESULTS_ROOT, img_name+'grad_cam_'+seg_class+'.jpg'))
     print("masked save location:", RESULTS_ROOT, img_name+'grad_cam_'+seg_class+'.jpg')
 
     irof = quantus.IROF(segmentation_method="slic",
