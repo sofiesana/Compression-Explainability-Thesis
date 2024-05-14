@@ -41,7 +41,7 @@ mkdir $TMPDIR/quantus
 cp -r /scratch/s4716671/github/Quantus-Thesis-Version $TMPDIR/quantus
 
 # Navigate to TMPDIR
-cd $TMPDIR/code/disparse
+cd $TMPDIR/code/Compression-Explainability-Thesis
 
 # make results directory
 mkdir $TMPDIR/results

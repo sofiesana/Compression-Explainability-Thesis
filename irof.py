@@ -203,7 +203,7 @@ if __name__ == "__main__":
         image = gt_batch["img"]
 
         if i == 0:
-            print("prediction shape:", preds.shape))
+            print("prediction shape:", preds.shape)
             print("preds:", preds)
             # print("seg:", preds[0].shape)
             # print("sn:", preds[1].shape)
