@@ -47,7 +47,7 @@ cd $TMPDIR/code/disparse
 mkdir $TMPDIR/results
 
 # Run training
-python3 irof.py --head all
+python3 irof.py --head all --pruned n --task seg
 
 # Save models by compressing and copying from TMPDIR
 mkdir -p /scratch/$USER/irof/job_${SLURM_JOBID}
