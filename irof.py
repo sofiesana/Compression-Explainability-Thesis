@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test_dataset = NYU_v2(DATA_ROOT, 'test')
-    test_loader = DataLoader(test_dataset, batch_size=1,
+    test_loader = DataLoader(test_dataset, batch_size=3,
                              num_workers=8, shuffle=True, pin_memory=True)
 
     pruned = args.pruned
@@ -209,51 +209,52 @@ if __name__ == "__main__":
             print("preds:", preds)
             # print("seg:", preds[0].shape)
             # print("sn:", preds[1].shape)
-        break
+        if i == 1:
+            break
 
-    seg = F.interpolate(preds, (480, 640))
-    sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
-    normalized_masks = torch.nn.functional.softmax(preds, dim=1)
-    seg_class = 'wall'
-    class_category = sem_class_to_idx[seg_class]
-    class_mask = normalized_masks[0, :, :, :].argmax(axis=0).detach().cpu().numpy()
-    class_mask_uint8 = 255 * np.uint8(class_mask == class_category)
-    class_mask_float = np.float32(class_mask == class_category)
+        seg = F.interpolate(preds, (480, 640))
+        sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
+        normalized_masks = torch.nn.functional.softmax(preds, dim=1)
+        seg_class = 'wall'
+        class_category = sem_class_to_idx[seg_class]
+        class_mask = normalized_masks[0, :, :, :].argmax(axis=0).detach().cpu().numpy()
+        class_mask_uint8 = 255 * np.uint8(class_mask == class_category)
+        class_mask_float = np.float32(class_mask == class_category)
 
-    ## To save:
-    masked_pixels = Image.fromarray(np.repeat(class_mask_uint8[:, :, None], 3, axis=-1))
-    masked_pixels.save(os.path.join(RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg'))
-    print("masked save location:", RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg')
+        ## To save:
+        masked_pixels = Image.fromarray(np.repeat(class_mask_uint8[:, :, None], 3, axis=-1))
+        masked_pixels.save(os.path.join(RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg'))
+        print("masked save location:", RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg')
 
-    og_img = (image.cpu().squeeze().permute(1,2,0).numpy())
-    og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
+        og_img = (image.cpu().squeeze().permute(1,2,0).numpy())
+        og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
 
-    target_layers = [model.backbone]
-    targets = [SemanticSegmentationTarget(class_category, class_mask_float)]
-    with GradCAM(model=model, target_layers=target_layers) as cam:
-        grayscale_cam = cam(input_tensor=gt_batch["img"],
-                            targets=targets)[0, :]
-        cam_image = show_cam_on_image(og_img, grayscale_cam, use_rgb=True)
+        target_layers = [model.backbone]
+        targets = [SemanticSegmentationTarget(class_category, class_mask_float)]
+        with GradCAM(model=model, target_layers=target_layers) as cam:
+            grayscale_cam = cam(input_tensor=gt_batch["img"],
+                                targets=targets)[0, :]
+            cam_image = show_cam_on_image(og_img, grayscale_cam, use_rgb=True)
 
-    ## To save:
-    cam_image_final = Image.fromarray(cam_image)
-    cam_image_final.save(os.path.join(RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg'))
-    print("masked save location:", RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg')
+        ## To save:
+        cam_image_final = Image.fromarray(cam_image)
+        cam_image_final.save(os.path.join(RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg'))
+        print("masked save location:", RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg')
 
-    irof = quantus.IROF(segmentation_method="slic",
-                            perturb_baseline="mean",
-                            perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
-                            return_aggregate=False,
-                            )
+        irof = quantus.IROF(segmentation_method="slic",
+                                perturb_baseline="mean",
+                                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                                return_aggregate=False,
+                                )
 
-    grayscale_cam_batch = np.expand_dims(grayscale_cam, axis=0)
-    grayscale_cam_batch.shape     
-    labels = np.unique(gt_batch["seg"].cpu().numpy()[0])
-    labels[labels == 255] = 0
-    
-    scores = irof(model=model,
-        x_batch=image,
-        y_batch=torch.tensor(labels),
-        a_batch=grayscale_cam_batch,
-        device=device)
-    print("scores:", scores)
+        grayscale_cam_batch = np.expand_dims(grayscale_cam, axis=0)
+        grayscale_cam_batch.shape     
+        labels = np.unique(gt_batch["seg"].cpu().numpy()[0])
+        labels[labels == 255] = 0
+        
+        scores = irof(model=model,
+            x_batch=image,
+            y_batch=torch.tensor(labels),
+            a_batch=grayscale_cam_batch,
+            device=device)
+        print("scores:", scores)
