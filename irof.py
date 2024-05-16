@@ -256,8 +256,6 @@ if __name__ == "__main__":
                                 return_aggregate=False,
                                 )
 
-        # check this line
-        grayscale_cam_batch = np.expand_dims(attributions, axis=0)
 
         labels = np.unique(gt_batch["seg"].cpu().numpy()[0])
         labels[labels == 255] = 0
@@ -266,6 +264,6 @@ if __name__ == "__main__":
         scores = irof(model=model,
             x_batch=image,
             y_batch=labels,
-            a_batch=grayscale_cam_batch,
+            a_batch=attributions,
             device=device)
         print("scores:", scores)
