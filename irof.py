@@ -254,5 +254,6 @@ if __name__ == "__main__":
     scores = irof(model=model,
         x_batch=image,
         y_batch=torch.tensor(labels),
-        a_batch=grayscale_cam_batch)
+        a_batch=grayscale_cam_batch,
+        device=device)
     print("scores:", scores)
