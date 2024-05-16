@@ -233,7 +233,6 @@ if __name__ == "__main__":
         preds = model(gt_batch["img"])
         all_preds.append(preds)
         img_names = gt_batch["name"]
-        img_names = str(img_name[0]).replace('.png', '')
         image = gt_batch["img"]
 
         seg = F.interpolate(preds, (480, 640))
