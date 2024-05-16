@@ -201,6 +201,7 @@ if __name__ == "__main__":
         preds = model(gt_batch["img"])
         all_preds.append(preds)
         img_name = gt_batch["name"]
+        img_name = str(img_name[0]).replace('.png', '')
         image = gt_batch["img"]
 
         if i == 0:
@@ -221,8 +222,8 @@ if __name__ == "__main__":
 
     ## To save:
     masked_pixels = Image.fromarray(np.repeat(class_mask_uint8[:, :, None], 3, axis=-1))
-    masked_pixels.save(os.path.join(RESULTS_ROOT, str(img_name[0])+'predicted_mask_'+seg_class+'.jpg'))
-    print("masked save location:", RESULTS_ROOT, str(img_name[0])+'predicted_mask_'+seg_class+'.jpg')
+    masked_pixels.save(os.path.join(RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg'))
+    print("masked save location:", RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg')
 
     og_img = (image.cpu().squeeze().permute(1,2,0).numpy())
     og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
@@ -236,8 +237,8 @@ if __name__ == "__main__":
 
     ## To save:
     cam_image_final = Image.fromarray(cam_image)
-    cam_image_final.save(os.path.join(RESULTS_ROOT, str(img_name[0])+'grad_cam_'+seg_class+'.jpg'))
-    print("masked save location:", RESULTS_ROOT, str(img_name[0])+'grad_cam_'+seg_class+'.jpg')
+    cam_image_final.save(os.path.join(RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg'))
+    print("masked save location:", RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg')
 
     irof = quantus.IROF(segmentation_method="slic",
                             perturb_baseline="mean",
@@ -251,7 +252,7 @@ if __name__ == "__main__":
     labels[labels == 255] = 0
     
     scores = irof(model=model,
-        x_batch=image.cpu()[0].numpy(),
+        x_batch=image.cpu().numpy(),
         y_batch=torch.tensor(labels),
         a_batch=grayscale_cam_batch)
     print("scores:", scores)
