@@ -218,6 +218,9 @@ if __name__ == "__main__":
     image = None
 
     for i, gt_batch in enumerate(test_loader):
+        if i == 2:
+            break
+        
         model.eval()
         gt_batch["img"] = Variable(gt_batch["img"]).to(device)
         if "seg" in gt_batch:
@@ -232,14 +235,6 @@ if __name__ == "__main__":
         img_names = gt_batch["name"]
         img_names = str(img_name[0]).replace('.png', '')
         image = gt_batch["img"]
-
-        if i == 0:
-            print("prediction shape:", preds.shape)
-            print("preds:", preds)
-            # print("seg:", preds[0].shape)
-            # print("sn:", preds[1].shape)
-        if i == 1:
-            break
 
         seg = F.interpolate(preds, (480, 640))
         sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
