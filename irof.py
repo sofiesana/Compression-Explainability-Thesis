@@ -251,7 +251,7 @@ if __name__ == "__main__":
     labels[labels == 255] = 0
     
     scores = irof(model=model,
-        x_batch=image,
+        x_batch=image.cpu()[0].numpy(),
         y_batch=torch.tensor(labels),
         a_batch=grayscale_cam_batch)
     print("scores:", scores)
