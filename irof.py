@@ -156,7 +156,36 @@ def load_model(device, pruned, task):
 
     return model
 
+def get_binary_mask(mask_batch, img_names):
+    for i in range(len(mask_batch)):
+        name = img_names[i]
+        name = str(name).replace('.png', '')
+        img = mask_batch[i, :, : None]
+        masked_pixels = Image.fromarray(np.repeat(img, 3, axis=-1))
+        masked_pixels.save(os.path.join(RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg'))
+        print("masked save location:", RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg')
 
+def get_gradcam_image(img_names, attributions, image):
+    for i in range(len(image)):
+        name = img_names[i]
+        name = str(name).replace('.png', '')
+
+        og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
+        og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
+        
+        cam_image = show_cam_on_image(og_img, attributions[i], use_rgb=True)
+
+        cam_image_final = Image.fromarray(cam_image)
+        cam_image_final.save(os.path.join(RESULTS_ROOT, name+'_grad_cam_'+seg_class+'.jpg'))
+        print("gradcam save location:", RESULTS_ROOT, name+'_grad_cam_'+seg_class+'.jpg')
+
+def get_attributions(model, class_category, class_mask_float, image):
+    target_layers = [model.backbone]
+    targets = [SemanticSegmentationTarget(class_category, class_mask_float)]
+    with GradCAM(model=model, target_layers=target_layers) as cam:
+        grayscale_cam = cam(input_tensor=image,
+                            targets=targets)
+    return grayscale_cam
 
 
 if __name__ == "__main__":
@@ -200,8 +229,8 @@ if __name__ == "__main__":
 
         preds = model(gt_batch["img"])
         all_preds.append(preds)
-        img_name = gt_batch["name"]
-        img_name = str(img_name[0]).replace('.png', '')
+        img_names = gt_batch["name"]
+        img_names = str(img_name[0]).replace('.png', '')
         image = gt_batch["img"]
 
         if i == 0:
@@ -217,29 +246,15 @@ if __name__ == "__main__":
         normalized_masks = torch.nn.functional.softmax(preds, dim=1)
         seg_class = 'wall'
         class_category = sem_class_to_idx[seg_class]
-        class_mask = normalized_masks[0, :, :, :].argmax(axis=0).detach().cpu().numpy()
+        class_mask = normalized_masks.argmax(axis=1).detach().cpu().numpy()
         class_mask_uint8 = 255 * np.uint8(class_mask == class_category)
         class_mask_float = np.float32(class_mask == class_category)
 
-        ## To save:
-        masked_pixels = Image.fromarray(np.repeat(class_mask_uint8[:, :, None], 3, axis=-1))
-        masked_pixels.save(os.path.join(RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg'))
-        print("masked save location:", RESULTS_ROOT, img_name+'_predicted_mask_'+seg_class+'.jpg')
+        get_binary_mask(class_mask_uint8, img_names)
 
-        og_img = (image.cpu().squeeze().permute(1,2,0).numpy())
-        og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
+        attributions = get_attributions(model, class_category, class_mask_float, image)
 
-        target_layers = [model.backbone]
-        targets = [SemanticSegmentationTarget(class_category, class_mask_float)]
-        with GradCAM(model=model, target_layers=target_layers) as cam:
-            grayscale_cam = cam(input_tensor=gt_batch["img"],
-                                targets=targets)[0, :]
-            cam_image = show_cam_on_image(og_img, grayscale_cam, use_rgb=True)
-
-        ## To save:
-        cam_image_final = Image.fromarray(cam_image)
-        cam_image_final.save(os.path.join(RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg'))
-        print("masked save location:", RESULTS_ROOT, img_name+'_grad_cam_'+seg_class+'.jpg')
+        get_gradcam_image(img_names, attributions, image)
 
         irof = quantus.IROF(segmentation_method="slic",
                                 perturb_baseline="mean",
@@ -247,14 +262,16 @@ if __name__ == "__main__":
                                 return_aggregate=False,
                                 )
 
-        grayscale_cam_batch = np.expand_dims(grayscale_cam, axis=0)
-        grayscale_cam_batch.shape     
+        # check this line
+        grayscale_cam_batch = np.expand_dims(attributions, axis=0)
+
         labels = np.unique(gt_batch["seg"].cpu().numpy()[0])
         labels[labels == 255] = 0
+        labels = torch.tensor(labels)
         
         scores = irof(model=model,
             x_batch=image,
-            y_batch=torch.tensor(labels),
+            y_batch=labels,
             a_batch=grayscale_cam_batch,
             device=device)
         print("scores:", scores)
