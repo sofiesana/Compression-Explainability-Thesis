@@ -249,7 +249,7 @@ if __name__ == "__main__":
         sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
         class_category = sem_class_to_idx[seg_class]
 
-        get_resized_binary_mask(img_names, preds, seg_class)
+        get_resized_binary_mask(img_names, preds, seg_class, class_category)
 
         class_mask_float = get_binary_mask(preds, class_category)
         attributions = get_attributions(model, class_category, class_mask_float, image)
