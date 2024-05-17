@@ -125,7 +125,6 @@ class SceneNet(nn.Module):
             outputs.append(output)
             # if running explainability experiments, only output task-specific output
             if self.task is not None and task_id == t_id:
-                print("task id:", task_id)
                 outputs = output
                 break
         return outputs
@@ -160,7 +159,7 @@ def get_binary_mask(mask_batch, img_names):
     for i in range(len(mask_batch)):
         name = img_names[i]
         name = str(name).replace('.png', '')
-        img = mask_batch[i, :, : None]
+        img = mask_batch[i, :, :, None]
         masked_pixels = Image.fromarray(np.repeat(img, 3, axis=-1))
         masked_pixels.save(os.path.join(RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg'))
         print("masked save location:", RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg')
