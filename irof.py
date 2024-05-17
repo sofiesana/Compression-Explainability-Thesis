@@ -155,16 +155,21 @@ def load_model(device, pruned, task):
 
     return model
 
-def get_binary_mask(mask_batch, img_names):
-    for i in range(len(mask_batch)):
+def get_resized_binary_mask(img_names, preds, seg_class, class_category):
+    resized_preds = F.interpolate(preds, (480, 640))
+    normalized_masks = torch.nn.functional.softmax(resized_preds, dim=1)
+    class_mask = normalized_masks.argmax(axis=1).detach().cpu().numpy()
+    class_mask_uint8 = 255 * np.uint8(class_mask == class_category)
+
+    for i in range(len(class_mask_uint8)):
         name = img_names[i]
         name = str(name).replace('.png', '')
-        img = mask_batch[i, :, :, None]
+        img = class_mask_uint8[i, :, :, None]
         masked_pixels = Image.fromarray(np.repeat(img, 3, axis=-1))
         masked_pixels.save(os.path.join(RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg'))
         print("masked save location:", RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg')
 
-def get_gradcam_image(img_names, attributions, image):
+def get_gradcam_image(img_names, attributions, image, seg_class):
     for i in range(len(image)):
         name = img_names[i]
         name = str(name).replace('.png', '')
@@ -185,6 +190,12 @@ def get_attributions(model, class_category, class_mask_float, image):
         grayscale_cam = cam(input_tensor=image,
                             targets=targets)
     return grayscale_cam
+
+def get_binary_mask(preds, class_category):
+    normalized_masks = torch.nn.functional.softmax(preds, dim=1)        
+    class_mask = normalized_masks.argmax(axis=1).detach().cpu().numpy()
+    class_mask_float = np.float32(class_mask == class_category)
+    return class_mask_float
 
 
 if __name__ == "__main__":
@@ -234,20 +245,16 @@ if __name__ == "__main__":
         img_names = gt_batch["name"]
         image = gt_batch["img"]
 
-        seg = F.interpolate(preds, (480, 640))
-        sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
-        normalized_masks = torch.nn.functional.softmax(preds, dim=1)
         seg_class = 'wall'
+        sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
         class_category = sem_class_to_idx[seg_class]
-        class_mask = normalized_masks.argmax(axis=1).detach().cpu().numpy()
-        class_mask_uint8 = 255 * np.uint8(class_mask == class_category)
-        class_mask_float = np.float32(class_mask == class_category)
 
-        get_binary_mask(class_mask_uint8, img_names)
+        get_resized_binary_mask(img_names, preds, seg_class)
 
+        class_mask_float = get_binary_mask(preds, class_category)
         attributions = get_attributions(model, class_category, class_mask_float, image)
 
-        get_gradcam_image(img_names, attributions, image)
+        get_gradcam_image(img_names, attributions, image, seg_class)
 
         irof = quantus.IROF(segmentation_method="slic",
                                 perturb_baseline="mean",
