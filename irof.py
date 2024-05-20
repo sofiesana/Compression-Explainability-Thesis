@@ -260,10 +260,13 @@ if __name__ == "__main__":
                                 perturb_baseline="mean",
                                 perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
                                 return_aggregate=False,
+                                class_category=class_category,
+                                class_name=seg_class,
+                                num_classes=40
                                 )
 
 
-        labels = np.unique(gt_batch["seg"].cpu().numpy()[0])
+        labels = np.unique(gt_batch["seg"].cpu().numpy())
         labels[labels == 255] = 0
         labels = torch.tensor(labels)
         
