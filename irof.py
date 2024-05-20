@@ -226,6 +226,7 @@ if __name__ == "__main__":
     preds = None
     img_name = None
     image = None
+    class_scores = {}
 
     for i, gt_batch in enumerate(test_loader):
         if i == 2:
@@ -245,34 +246,52 @@ if __name__ == "__main__":
         img_names = gt_batch["name"]
         image = gt_batch["img"]
 
-        seg_class = 'wall'
+        sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
         sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
-        class_category = sem_class_to_idx[seg_class]
-
-        get_resized_binary_mask(img_names, preds, seg_class, class_category)
-
-        class_mask_float = get_binary_mask(preds, class_category)
-        attributions = get_attributions(model, class_category, class_mask_float, image)
-
-        get_gradcam_image(img_names, attributions, image, seg_class)
-
-        irof = quantus.IROF(segmentation_method="slic",
-                                perturb_baseline="mean",
-                                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
-                                return_aggregate=False,
-                                class_category=class_category,
-                                class_name=seg_class,
-                                num_classes=40
-                                )
-
-
-        labels = np.unique(gt_batch["seg"].cpu().numpy())
-        labels[labels == 255] = 0
-        labels = torch.tensor(labels)
         
-        scores = irof(model=model,
-            x_batch=image,
-            y_batch=labels,
-            a_batch=attributions,
-            device=device)
-        print("scores:", scores)
+        for class_category in range(TASKS_NUM_CLASS[0]):
+            if class_category == 1:
+                break
+            if class_category not in class_scores.keys():
+                class_scores[class_category] = []
+
+            class_name = sem_idx_to_class[class_category]
+
+            get_resized_binary_mask(img_names, preds, class_name, class_category)
+
+            class_mask_float = get_binary_mask(preds, class_category)
+            attributions = get_attributions(model, class_category, class_mask_float, image)
+
+            get_gradcam_image(img_names, attributions, image, class_name)
+
+            irof = quantus.IROF(segmentation_method="slic",
+                                    perturb_baseline="mean",
+                                    perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                                    return_aggregate=False,
+                                    class_category=class_category,
+                                    class_name=class_name,
+                                    num_classes=40
+                                    )
+
+
+            labels = np.unique(gt_batch["seg"].cpu().numpy())
+            labels[labels == 255] = 0
+            labels = torch.tensor(labels)
+            
+            scores = irof(model=model,
+                x_batch=image,
+                y_batch=gt_batch["seg"],
+                a_batch=attributions,
+                device=device)
+            print("scores:", scores)
+
+            if scores is not None:
+                class_scores[class_category].extend(scores)
+        
+        print(class_scores)
+        
+        mean_aoc = {}
+        for category in class_scores.keys():
+            mean_aoc[category] = np.mean(np.array(class_scores[category]))
+        
+        print(mean_aoc)
