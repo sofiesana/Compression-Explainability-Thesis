@@ -166,7 +166,9 @@ def get_resized_binary_mask(img_names, preds, seg_class, class_category):
         name = str(name).replace('.png', '')
         img = class_mask_uint8[i, :, :, None]
         masked_pixels = Image.fromarray(np.repeat(img, 3, axis=-1))
-        masked_pixels.save(os.path.join(RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg'))
+
+        path = os.path.join(RESULTS_ROOT, class_name, name+'_predicted_mask.jpg')
+        masked_pixels.save(path)
         print("masked save location:", RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg')
 
 def get_gradcam_image(img_names, attributions, image, seg_class):
@@ -180,7 +182,8 @@ def get_gradcam_image(img_names, attributions, image, seg_class):
         cam_image = show_cam_on_image(og_img, attributions[i], use_rgb=True)
 
         cam_image_final = Image.fromarray(cam_image)
-        cam_image_final.save(os.path.join(RESULTS_ROOT, name+'_grad_cam_'+seg_class+'.jpg'))
+        path = os.path.join(RESULTS_ROOT, class_name, name+'_grad_cam.jpg')
+        cam_image_final.save(path)
         print("gradcam save location:", RESULTS_ROOT, name+'_grad_cam_'+seg_class+'.jpg')
 
 def get_attributions(model, class_category, class_mask_float, image):
@@ -197,6 +200,37 @@ def get_binary_mask(preds, class_category):
     class_mask_float = np.float32(class_mask == class_category)
     return class_mask_float
 
+def plot_all_irof_curves(histories, class_name):
+    for history in histories:
+        plt.plot(range(len(history)), history, marker='o')
+        plt.title('AOC Curve')
+        plt.xlabel('Number of Segments Removed')
+        plt.ylabel('Class ' + class_name + ' Score')
+        plt.grid(True)
+        path = os.path.join(RESULTS_ROOT, class_name, 'all_irof.png')
+        plt.savefig(path)
+        plt.close()
+
+def plot_avg_irof_curve(histories, class_name):
+    avg_curve = np.mean(histories, axis=0)
+    print('avg_curve shape:', avg_curve.shape)
+    print('avg_curve:', avg_curve)
+    plt.plot(range(len(avg_curve)), avg_curve, marker='o')
+    plt.title('AOC Curve')
+    plt.xlabel('Number of Segments Removed')
+    plt.ylabel('Class ' + class_name + ' Score')
+    plt.grid(True)
+    path = os.path.join(RESULTS_ROOT, class_name, 'avg_irof.png')
+    plt.savefig(path)
+    plt.close()
+
+def make_class_directories(sem_idx_to_cls, class_indices):
+    for i in class_indices:
+        class_name = sem_idx_to_cls[i]        
+        # Parent Directory path 
+        path = os.path.join(RESULTS_ROOT, class_name)
+        os.mkdir(path)
+        print("Directory '% s' created" % path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='IROF Evaluation')
@@ -227,6 +261,12 @@ if __name__ == "__main__":
     img_name = None
     image = None
     class_scores = {}
+    class_histories = {}
+
+    sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
+    sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
+
+    make_class_directories(sem_idx_to_class, 40)
 
     for i, gt_batch in enumerate(test_loader):
         if i == 2:
@@ -245,9 +285,6 @@ if __name__ == "__main__":
         all_preds.append(preds)
         img_names = gt_batch["name"]
         image = gt_batch["img"]
-
-        sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
-        sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
         
         for class_category in range(TASKS_NUM_CLASS[0]):
             if class_category == 1:
@@ -273,25 +310,28 @@ if __name__ == "__main__":
                                     num_classes=40
                                     )
 
-
             labels = np.unique(gt_batch["seg"].cpu().numpy())
             labels[labels == 255] = 0
             labels = torch.tensor(labels)
             
-            scores = irof(model=model,
+            scores, histories = irof(model=model,
                 x_batch=image,
                 y_batch=gt_batch["seg"],
                 a_batch=attributions,
                 device=device)
-            print("scores:", scores)
 
             if scores is not None:
                 class_scores[class_category].extend(scores)
         
-        print(class_scores)
-        
-        mean_aoc = {}
-        for category in class_scores.keys():
-            mean_aoc[category] = np.mean(np.array(class_scores[category]))
-        
-        print(mean_aoc)
+    
+    print(class_scores)
+    
+    mean_aoc = {}
+
+    for category in class_scores.keys():
+        class_name = sem_idx_to_class[category]
+        mean_aoc[category] = np.mean(np.array(class_scores[category]))
+        plot_all_irof_curves(class_histories[category], class_name)
+        plot_avg_irof_curve(class_histories[category], class_name)
+    
+    print(mean_aoc)
