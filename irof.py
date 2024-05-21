@@ -225,7 +225,7 @@ def plot_avg_irof_curve(histories, class_name):
     plt.close()
 
 def make_class_directories(sem_idx_to_cls, class_indices):
-    for i in class_indices:
+    for i in range(class_indices):
         class_name = sem_idx_to_cls[i]        
         # Parent Directory path 
         path = os.path.join(RESULTS_ROOT, class_name)
