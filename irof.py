@@ -208,8 +208,18 @@ def plot_all_irof_curves(histories, class_name):
         plt.close()
 
 def plot_avg_irof_curve(histories, class_name):
-    histories = np.array(histories)
-    avg_curve = np.mean(histories, axis=0)
+    # Step 1: Find the length of the longest list
+    max_length = max(len(lst) for lst in histories)
+
+    # Step 2: Pad shorter lists with NaN values
+    padded_lists = [lst + [np.nan] * (max_length - len(lst)) for lst in histories]
+
+    # Step 3: Convert to a NumPy array
+    array = np.array(padded_lists)
+
+    # Step 4: Compute the mean along axis 0, ignoring NaN values
+    avg_curve = np.nanmean(array, axis=0)
+
     print('avg_curve shape:', avg_curve.shape)
     print('avg_curve:', avg_curve)
     plt.plot(range(len(avg_curve)), avg_curve, marker='o')
