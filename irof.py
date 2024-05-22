@@ -291,6 +291,7 @@ if __name__ == "__main__":
                 break
             if class_category not in class_scores.keys():
                 class_scores[class_category] = []
+                class_history[class_category] = []
 
             class_name = sem_idx_to_class[class_category]
 
@@ -322,6 +323,7 @@ if __name__ == "__main__":
 
             if scores is not None:
                 class_scores[class_category].extend(scores)
+                class_history[class_category].extend(histories)
         
     
     print(class_scores)
