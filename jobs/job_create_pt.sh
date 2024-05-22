@@ -18,6 +18,12 @@ source $HOME/venvs/first/bin/activate
 # make a directory in the TMPDIR for the pre-trained model
 mkdir $TMPDIR/pt
 
+# make a directory in the TMPDIR for the dataset
+mkdir $TMPDIR/nyuv2
+
+# extract data from scratch to TMPDIR/nyuv2
+tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
+
 # extract pre-trained model from scratch to TMPDIR/pt
 # Change 'try' to match the folder containing the desired model
 tar xzf /scratch/$USER/baseline/try/results.tar.gz -C $TMPDIR/pt
