@@ -90,8 +90,7 @@ if __name__ == "__main__":
 
     # Initialize and Load Pruned Network
     if pruned:
-        tmpdir = os.environ.get('TMPDIR')
-        save_path = os.path.join(tmpdir, source, 'pt/tmp/results/best_nyuv2_baseline.pth')
+        save_path = os.path.join(source, '/tmp/results/best_nyuv2_baseline.pth')
         # save_path = f"{source}/{network_name}.pth"
         import torch.nn.utils.prune as prune
         import torch.nn.functional as F
