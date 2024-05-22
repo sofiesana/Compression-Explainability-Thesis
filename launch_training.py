@@ -35,6 +35,7 @@ if __name__ == "__main__":
                         help='dataset: choose between nyuv2, cityscapes, taskonomy', default="nyuv2")
     parser.add_argument('--dest', default='/data/alexsun/save_model/release_test/',
                         type=str, help='Destination Save Folder.')
+    parser.add_argument('--source', default=None, type=str, help='Path to model to be trained (for static or pt pruning)')
     # parser.add_argument('--pretrained', dest='pretrained', action='store_true', default=False)
     args = parser.parse_args()
 
@@ -43,6 +44,7 @@ if __name__ == "__main__":
     dataset = args.dataset
     method = args.method
     ratio = args.ratio
+    source = args.source
     pruned = method in ["disparse_static", "disparse_pt"]
     pretrained = method in ["disparse_pt"]
 
@@ -88,7 +90,9 @@ if __name__ == "__main__":
 
     # Initialize and Load Pruned Network
     if pruned:
-        save_path = f"{dest}/{network_name}.pth"
+        tmpdir = os.environ.get('TMPDIR')
+        save_path = os.path.join(tmpdir, source, 'pt/tmp/results/best_nyuv2_baseline.pth')
+        # save_path = f"{source}/{network_name}.pth"
         import torch.nn.utils.prune as prune
         import torch.nn.functional as F
         from prune_utils import *
