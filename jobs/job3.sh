@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=attempt1
-#SBATCH --time=00:05:00
+#SBATCH --time=03:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
@@ -22,7 +22,7 @@ mkdir $TMPDIR/nyuv2
 tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
 
 # Copy code to $TMPDIR
-cp -r /scratch/$USER/disparse $TMPDIR
+cp -r /scratch/$USER/github/Compression-Explainability-Thesis $TMPDIR/code
 
 # Navigate to TMPDIR
 cd $TMPDIR/disparse
