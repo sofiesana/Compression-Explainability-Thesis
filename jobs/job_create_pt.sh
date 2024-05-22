@@ -41,7 +41,7 @@ cd $TMPDIR/code/Compression-Explainability-Thesis
 mkdir $TMPDIR/results
 
 # Run training
-python3 create_pruned_net.py --dataset nyuv2 --method disparse_pt --ratio 50 --dest $TMPDIR/results
+python3 create_pruned_net.py --dataset nyuv2 --method disparse_pt --ratio 70 --dest $TMPDIR/results
 
 
 # Save models by compressing and copying from TMPDIR
