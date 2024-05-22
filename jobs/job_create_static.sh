@@ -15,6 +15,12 @@ module load Python/3.8.16-GCCcore-11.2.0
 # activate virtual environment
 source $HOME/venvs/first/bin/activate
 
+# make a directory in the TMPDIR for the dataset
+mkdir $TMPDIR/nyuv2
+
+# extract data from scratch to TMPDIR/nyuv2
+tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
+
 # make a directory in the TMPDIR for the code
 mkdir $TMPDIR/code
 
