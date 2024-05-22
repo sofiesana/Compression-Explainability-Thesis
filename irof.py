@@ -163,7 +163,6 @@ def get_resized_binary_mask(img_names, preds, seg_class, class_category):
 
     for i in range(len(class_mask_uint8)):
         name = img_names[i]
-        name = str(name).replace('.png', '')
         img = class_mask_uint8[i, :, :, None]
         masked_pixels = Image.fromarray(np.repeat(img, 3, axis=-1))
 
@@ -174,8 +173,6 @@ def get_resized_binary_mask(img_names, preds, seg_class, class_category):
 def get_gradcam_image(img_names, attributions, image, seg_class):
     for i in range(len(image)):
         name = img_names[i]
-        name = str(name).replace('.png', '')
-
         og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
         og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
         
@@ -285,6 +282,9 @@ if __name__ == "__main__":
         all_preds.append(preds)
         img_names = gt_batch["name"]
         image = gt_batch["img"]
+
+        for i in range(len(image)):
+            img_names[i] = str(img_names[i]).replace('.png', '')
         
         for class_category in range(TASKS_NUM_CLASS[0]):
             if class_category == 1:
@@ -315,6 +315,8 @@ if __name__ == "__main__":
             labels[labels == 255] = 0
             labels = torch.tensor(labels)
             
+            if class_category not in gt_batch["seg"]:
+                print(class_name, " not in image ", image_)
             scores, histories = irof(model=model,
                 x_batch=image,
                 y_batch=gt_batch["seg"],
