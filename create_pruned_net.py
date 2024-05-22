@@ -131,7 +131,7 @@ if __name__ == "__main__":
     warnings.filterwarnings('ignore')
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, help='dataset: choose between nyuv2, cityscapes, taskonomy', default="nyuv2")
-    parser.add_argument('--num_batches',type=int, help='number of batches to estimate importance', default=50)
+    parser.add_argument('--num_batches',type=int, help='number of batches to estimate importance', default=30)
     parser.add_argument('--method', type=str, help='method name', default="disparse_static")
     parser.add_argument('--ratio',type=int, help='percentage of sparsity level', default=90)
     parser.add_argument('--dest', default='/data/alexsun/save_model/release_test/', type=str, help='Destination Save Folder.')
