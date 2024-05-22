@@ -116,7 +116,6 @@ class SceneNet(nn.Module):
                 task_id = 0
             if self.task == 'sn':
                 task_id = 1
-        task_output = 'nothing'
         for t_id in range(self.num_tasks):
             output = getattr(self, 'task%d_fc1_c0' % (t_id + 1))(feats) + \
                 getattr(self, 'task%d_fc1_c1' % (t_id + 1))(feats) + \
@@ -289,9 +288,6 @@ if __name__ == "__main__":
         for class_category in range(TASKS_NUM_CLASS[0]):
             if class_category == 1:
                 break
-            if class_category not in class_scores.keys():
-                class_scores[class_category] = []
-                class_histories[class_category] = []
 
             class_name = sem_idx_to_class[class_category]
 
@@ -326,6 +322,10 @@ if __name__ == "__main__":
                 device=device)
 
             if scores is not None:
+                if class_category not in class_scores.keys():
+                    class_scores[class_category] = []
+                    class_histories[class_category] = []
+
                 class_scores[class_category].extend(scores)
                 class_histories[class_category].extend(histories)
         
@@ -336,8 +336,9 @@ if __name__ == "__main__":
 
     for category in class_scores.keys():
         class_name = sem_idx_to_class[category]
-        mean_aoc[category] = np.mean(np.array(class_scores[category]))
-        plot_all_irof_curves(class_histories[category], class_name)
-        plot_avg_irof_curve(class_histories[category], class_name)
+        if category in class_scores:
+            mean_aoc[category] = np.mean(np.array(class_scores[category]))
+            plot_all_irof_curves(class_histories[category], class_name)
+            plot_avg_irof_curve(class_histories[category], class_name)
     
     print(mean_aoc)
