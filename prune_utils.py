@@ -47,7 +47,7 @@ def disparse_prune_static(net, criterion, train_loader, num_batches, keep_ratio,
     # Estimate importance per task in a data-driven manner
     train_iter = iter(train_loader)
     for i in range(num_batches):
-
+        print("num batches:", num_batches)
         gt_batch = None
         preds = None
         loss = None
