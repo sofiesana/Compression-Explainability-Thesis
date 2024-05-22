@@ -21,11 +21,14 @@ mkdir $TMPDIR/nyuv2
 # extract data from scratch to TMPDIR/nyuv2
 tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
 
+# make a directory in the TMPDIR for the code
+mkdir $TMPDIR/code
+
 # Copy code to $TMPDIR
 cp -r /scratch/$USER/github/Compression-Explainability-Thesis $TMPDIR/code
 
 # Navigate to TMPDIR
-cd $TMPDIR/disparse
+cd $TMPDIR/code/Compression-Explainability-Thesis
 
 # make results directory
 mkdir $TMPDIR/results
