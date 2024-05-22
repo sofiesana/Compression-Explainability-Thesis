@@ -335,9 +335,11 @@ if __name__ == "__main__":
 
     for category in class_scores.keys():
         class_name = sem_idx_to_class[category]
-        if category in class_scores:
-            mean_aoc[category] = np.mean(np.array(class_scores[category]))
-            plot_all_irof_curves(class_histories[category], class_name)
-            plot_avg_irof_curve(class_histories[category], class_name)
+        print(class_scores[category])
+        print(type(class_scores[category]))
+        print(class_scores[category].shape)
+        mean_aoc[category] = np.mean(np.array(class_scores[category]))
+        plot_all_irof_curves(class_histories[category], class_name)
+        plot_avg_irof_curve(class_histories[category], class_name)
     
     print(mean_aoc)
