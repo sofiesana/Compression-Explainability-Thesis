@@ -199,13 +199,13 @@ def plot_all_irof_curves(histories, class_name):
     for history in histories:
         history = np.array(history)
         plt.plot(range(len(history)), history, marker='o')
-        plt.title('AOC Curve')
-        plt.xlabel('Number of Segments Removed')
-        plt.ylabel('Class ' + class_name + ' Score')
-        plt.grid(True)
-        path = os.path.join(RESULTS_ROOT, class_name, 'all_irof.png')
-        plt.savefig(path)
-        plt.close()
+    plt.title('AOC Curve')
+    plt.xlabel('Number of Segments Removed')
+    plt.ylabel('Class ' + class_name + ' Score')
+    plt.grid(True)
+    path = os.path.join(RESULTS_ROOT, class_name, 'all_irof.png')
+    plt.savefig(path)
+    plt.close()
 
 def plot_avg_irof_curve(histories, class_name):
     # Step 1: Find the length of the longest list
