@@ -12,7 +12,6 @@ from torch.autograd import Variable
 from prune_utils import *
 import tqdm
 import pickle
-import matplotlib as plt
 import argparse
 import os
 import sys
