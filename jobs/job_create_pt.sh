@@ -26,7 +26,7 @@ tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
 
 # extract pre-trained model from scratch to TMPDIR/pt
 # Change 'try' to match the folder containing the desired model
-tar xzf /scratch/$USER/baseline/try/results.tar.gz -C $TMPDIR/pt
+tar xzf /scratch/$USER/baseline/baseline1/results.tar.gz -C $TMPDIR/pt
 
 # make a directory in the TMPDIR for the code
 mkdir $TMPDIR/code
