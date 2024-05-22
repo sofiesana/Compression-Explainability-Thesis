@@ -54,5 +54,4 @@ python3 launch_training.py --dataset nyuv2 --method disparse_pt --ratio 90 --des
 ############ SAVING:
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/pruned_models/pt/80/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/pruned_models/pt/80/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+tar czvf /scratch/$USER/pruned_models/pt/90/baseline1/trained_results.tar.gz $TMPDIR/results
