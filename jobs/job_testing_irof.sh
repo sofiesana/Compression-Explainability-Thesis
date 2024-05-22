@@ -3,7 +3,7 @@
 #SBATCH --time=00:03:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --gpus-per-node=1
+#SBATCH --gpus-per-node=a100:1
 #SBATCH --mem=2GB
 
 # remove all previously loaded modules
