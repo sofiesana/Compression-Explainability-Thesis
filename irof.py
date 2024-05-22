@@ -315,8 +315,10 @@ if __name__ == "__main__":
             labels[labels == 255] = 0
             labels = torch.tensor(labels)
             
-            if class_category not in gt_batch["seg"]:
-                print(class_name, " not in image ", image_)
+            for i, img_seg in enumerate(gt_batch["seg"]):
+                if class_category not in img_seg:
+                    print(class_name, " not in image ", str(img_names[i]))
+
             scores, histories = irof(model=model,
                 x_batch=image,
                 y_batch=gt_batch["seg"],
