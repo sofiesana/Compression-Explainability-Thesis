@@ -115,6 +115,9 @@ def train(net, dataset, criterion, optimizer, scheduler, train_loader, test_load
 
                     if save_model:
                         if best_test_loss is None:
+                            print("best model saved at:", f"{dest}/best_{network_name}.pth")
+                            torch.save(net.state_dict(),
+                                       f"{dest}/best_{network_name}.pth")
                             best_test_loss = test_loss
                         elif test_loss < best_test_loss:
                             print("best model saved at:", f"{dest}/best_{network_name}.pth")
