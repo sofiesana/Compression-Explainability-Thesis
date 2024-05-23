@@ -91,7 +91,7 @@ if __name__ == "__main__":
     # Initialize and Load Pruned Network
     if pruned:
         print(source)
-        save_path = source + '/tmp/results/' + f"{dataset}_{method}_{ratio}"
+        save_path = source + '/tmp/results/' + f"{dataset}_{method}_{ratio}" + ".pth"
         # save_path = f"{source}/{network_name}.pth"
         import torch.nn.utils.prune as prune
         import torch.nn.functional as F
