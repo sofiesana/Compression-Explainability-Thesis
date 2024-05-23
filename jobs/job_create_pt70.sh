@@ -26,7 +26,7 @@ tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
 
 # extract pre-trained model from scratch to TMPDIR/pt
 # Change 'try' to match the folder containing the desired model
-tar xzf /scratch/$USER/baseline/baseline2/results.tar.gz -C $TMPDIR/pt
+tar xzf /scratch/$USER/baseline/baseline3/results.tar.gz -C $TMPDIR/pt
 
 # make a directory in the TMPDIR for the code
 mkdir $TMPDIR/code
@@ -45,5 +45,5 @@ python3 create_pruned_net.py --dataset nyuv2 --method disparse_pt --ratio 70 --d
 
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/pruned_models/pt/70/baseline2
-tar czvf /scratch/$USER/pruned_models/pt/70/baseline2/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/pruned_models/pt/70/baseline3
+tar czvf /scratch/$USER/pruned_models/pt/70/baseline3/results.tar.gz $TMPDIR/results
