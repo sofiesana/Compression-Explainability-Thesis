@@ -326,9 +326,11 @@ if __name__ == "__main__":
                 if class_category not in img_seg:
                     print(class_name, " not in image ", str(img_names[i]))
 
+            y_batch = preds.argmax(axis=1)
+
             scores, histories = irof(model=model,
                 x_batch=image,
-                y_batch=gt_batch["seg"],
+                y_batch=y_batch,
                 a_batch=attributions,
                 device=device)
 
