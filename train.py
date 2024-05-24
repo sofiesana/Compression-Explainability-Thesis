@@ -229,7 +229,7 @@ def disparse_dynamic_train(net, dataset, criterion, amp_criterion, optimizer, sc
                 s = print_sparsity(net, False)
                 print(f"Final Sparsity: {s}")
 
-            torch.cpu.empty_cache()
+            torch.cuda.empty_cache()
             # get the preds
             preds = net(gt_batch["img"])
             loss = criterion(preds, gt_batch)
