@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=attempt1
-#SBATCH --time=02:45:00
+#SBATCH --time=03:15:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
@@ -22,7 +22,7 @@ mkdir $TMPDIR/pt
 
 # extract pre-trained model from scratch to TMPDIR/pt
 # Change 'try' to match the folder containing the desired model
-tar xzf /scratch/s4716671/pruned_models/static/50/static1/results.tar.gz -C $TMPDIR/pt
+tar xzf /scratch/s4716671/pruned_models/static/90/static1/results.tar.gz -C $TMPDIR/pt
 
 ############ GETTING NYUV2 DATA:
 
@@ -49,9 +49,9 @@ mkdir $TMPDIR/results
 cd $TMPDIR/code/Compression-Explainability-Thesis
 
 # Run training
-python3 launch_training.py --dataset nyuv2 --method disparse_static --ratio 50 --dest $TMPDIR/results --source $TMPDIR/pt
+python3 launch_training.py --dataset nyuv2 --method disparse_static --ratio 90 --dest $TMPDIR/results --source $TMPDIR/pt
 
 ############ SAVING:
 
 # Save models by compressing and copying from TMPDIR
-tar czvf /scratch/$USER/pruned_models/pt/50/baseline1/trained_results.tar.gz $TMPDIR/results
+tar czvf /scratch/$USER/pruned_models/static/90/static1/trained_results.tar.gz $TMPDIR/results
