@@ -22,7 +22,7 @@ mkdir $TMPDIR/pt
 
 # extract pre-trained model from scratch to TMPDIR/pt
 # Change 'try' to match the folder containing the desired model
-tar xzf /scratch/s4716671/pruned_models/static3/80/static3/results.tar.gz -C $TMPDIR/pt
+tar xzf /scratch/s4716671/pruned_models/static/80/static3/results.tar.gz -C $TMPDIR/pt
 
 ############ GETTING NYUV2 DATA:
 
