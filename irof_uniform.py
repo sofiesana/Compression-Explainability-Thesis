@@ -311,7 +311,7 @@ if __name__ == "__main__":
             get_gradcam_image(img_names, attributions, image, class_name)
 
             irof = quantus.IROF(segmentation_method="slic",
-                                    perturb_baseline="random",
+                                    perturb_baseline="uniform",
                                     perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
                                     return_aggregate=False,
                                     class_category=class_category,
