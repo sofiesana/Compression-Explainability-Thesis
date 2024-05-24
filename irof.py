@@ -287,7 +287,7 @@ if __name__ == "__main__":
             gt_batch["normal"] = Variable(gt_batch["normal"]).to(device)
 
         preds = model(gt_batch["img"])
-        all_preds.append(preds)
+        
         img_names = gt_batch["name"]
         image = gt_batch["img"]
 
@@ -323,7 +323,7 @@ if __name__ == "__main__":
             labels[labels == 255] = 0
             labels = torch.tensor(labels)
             
-            for i, img_seg in enumerate(gt_batch["seg"]):
+            for i, img_seg in enumerate(torch.argmax(preds)):
                 if class_category not in img_seg:
                     print(class_name, " not in image ", str(img_names[i]))
 
