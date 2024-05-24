@@ -337,24 +337,26 @@ if __name__ == "__main__":
             print("valid:", valid_indices)
 
             y_batch = preds.argmax(axis=1)
+
+            if valid_indices:
             
-            y_batch = y_batch[valid_indices]
-            x_batch = image[valid_indices]
-            a_batch = attributions[valid_indices]
+                y_batch = y_batch[valid_indices]
+                x_batch = image[valid_indices]
+                a_batch = attributions[valid_indices]
 
-            scores, histories = irof(model=model,
-                x_batch=image,
-                y_batch=y_batch,
-                a_batch=attributions,
-                device=device)
+                scores, histories = irof(model=model,
+                    x_batch=image,
+                    y_batch=y_batch,
+                    a_batch=attributions,
+                    device=device)
 
-            if scores is not None:
-                if class_category not in class_scores.keys():
-                    class_scores[class_category] = []
-                    class_histories[class_category] = []
+                if scores is not None:
+                    if class_category not in class_scores.keys():
+                        class_scores[class_category] = []
+                        class_histories[class_category] = []
 
-                class_scores[class_category].extend(scores)
-                class_histories[class_category].extend(histories)
+                    class_scores[class_category].extend(scores)
+                    class_histories[class_category].extend(histories)
         
     
     print(class_scores)
