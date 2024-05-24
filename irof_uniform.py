@@ -323,7 +323,7 @@ if __name__ == "__main__":
             labels[labels == 255] = 0
             labels = torch.tensor(labels)
             
-            for i, img_seg in enumerate(torch.argmax(preds)):
+            for i, img_seg in enumerate(torch.argmax(preds, axis=1)):
                 if class_category not in img_seg:
                     print(class_name, " not in image ", str(img_names[i]))
 
