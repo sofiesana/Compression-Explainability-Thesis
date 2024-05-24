@@ -334,7 +334,7 @@ if __name__ == "__main__":
                 if class_category in img_seg and not np.all((attributions[i] == 0)):
                     valid_indices.append(i)
 
-            print("valid:" valid_indices)
+            print("valid:", valid_indices)
 
             y_batch = preds.argmax(axis=1)
             
