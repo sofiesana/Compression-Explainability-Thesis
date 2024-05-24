@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
-#SBATCH --mem=2GB
+#SBATCH --mem=6GB
 
 # remove all previously loaded modules
 module purge

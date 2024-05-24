@@ -251,7 +251,7 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test_dataset = NYU_v2(DATA_ROOT, 'test')
-    test_loader = DataLoader(test_dataset, batch_size=3,
+    test_loader = DataLoader(test_dataset, batch_size=10,
                              num_workers=8, shuffle=True, pin_memory=True)
 
     pruned = args.pruned
@@ -272,8 +272,6 @@ if __name__ == "__main__":
 
     sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
     sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
-
-    make_class_directories(sem_idx_to_class, 40)
 
     for i, gt_batch in enumerate(test_loader):
         if i == 2:
@@ -297,10 +295,13 @@ if __name__ == "__main__":
             img_names[i] = str(img_names[i]).replace('.png', '')
         
         for class_category in range(TASKS_NUM_CLASS[0]):
-            if class_category == 1:
-                break
 
             class_name = sem_idx_to_class[class_category]
+
+            path = os.path.join(RESULTS_ROOT, class_name)
+            if not os.path.isdir(path):
+                os.mkdir(path)
+            print("Directory '% s' created" % path)
 
             get_resized_binary_mask(img_names, preds, class_name, class_category)
 
