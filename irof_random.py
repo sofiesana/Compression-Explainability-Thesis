@@ -311,7 +311,7 @@ if __name__ == "__main__":
             get_gradcam_image(img_names, attributions, image, class_name)
 
             irof = quantus.IROF(segmentation_method="slic",
-                                    perturb_baseline="mean",
+                                    perturb_baseline="random",
                                     perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
                                     return_aggregate=False,
                                     class_category=class_category,
@@ -355,9 +355,3 @@ if __name__ == "__main__":
         plot_avg_irof_curve(class_histories[category], class_name)
     
     print(mean_aoc)
-
-    with open(RESULTS_ROOT + 'histories.pkl', 'wb') as file:
-        pickle.dump(class_histories, file)
-    
-    with open(RESULTS_ROOT + 'scores.pkl', 'wb') as file:
-        pickle.dump(class_scores, file)
