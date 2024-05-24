@@ -329,9 +329,9 @@ if __name__ == "__main__":
             for i, img_seg in enumerate(torch.argmax(preds, axis=1)):
                 if class_category not in img_seg:
                     print(class_name, " not in image ", str(img_names[i]))
-                if not np.all((attributions[i] == 0)):
+                if np.all((attributions[i] == 0)):
                     print("attributions all zero for image ", str(img_names[i]))
-                if class_category in img_seg and np.all((attributions[i] == 0)):
+                if class_category in img_seg and not np.all((attributions[i] == 0)):
                     valid_indices.append(i)
 
             print("valid:" valid_indices)
