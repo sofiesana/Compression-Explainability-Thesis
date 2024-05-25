@@ -298,11 +298,6 @@ if __name__ == "__main__":
 
             class_name = sem_idx_to_class[class_category]
 
-            path = os.path.join(RESULTS_ROOT, class_name)
-            if not os.path.isdir(path):
-                os.mkdir(path)
-            print("Directory '% s' created" % path)
-
             irof = quantus.IROF(segmentation_method="slic",
                                     perturb_baseline="mean",
                                     perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
@@ -325,9 +320,15 @@ if __name__ == "__main__":
 
             print("valid:", valid_indices)
 
-            y_batch = preds.argmax(axis=1)
 
             if valid_indices:
+
+                path = os.path.join(RESULTS_ROOT, class_name)
+                if not os.path.isdir(path):
+                    os.mkdir(path)
+                print("Directory '% s' created" % path)
+
+                y_batch = preds.argmax(axis=1)
                 
                 reduced_image_names = img_names[valid_indices]
                 y_batch = y_batch[valid_indices]
