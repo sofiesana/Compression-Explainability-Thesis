@@ -303,13 +303,6 @@ if __name__ == "__main__":
                 os.mkdir(path)
             print("Directory '% s' created" % path)
 
-            get_resized_binary_mask(img_names, preds, class_name, class_category)
-
-            class_mask_float = get_binary_mask(preds, class_category)
-            attributions = get_attributions(model, class_category, class_mask_float, image)
-
-            get_gradcam_image(img_names, attributions, image, class_name)
-
             irof = quantus.IROF(segmentation_method="slic",
                                     perturb_baseline="mean",
                                     perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
@@ -318,10 +311,6 @@ if __name__ == "__main__":
                                     class_name=class_name,
                                     num_classes=40
                                     )
-
-            labels = np.unique(gt_batch["seg"].cpu().numpy())
-            labels[labels == 255] = 0
-            labels = torch.tensor(labels)
             
             valid_indices = []
 
@@ -339,10 +328,19 @@ if __name__ == "__main__":
             y_batch = preds.argmax(axis=1)
 
             if valid_indices:
-            
+                
+                reduced_image_names = img_names[valid_indices]
                 y_batch = y_batch[valid_indices]
                 x_batch = image[valid_indices]
                 a_batch = attributions[valid_indices]
+                reduced_preds = preds[valid_indices]
+
+                get_resized_binary_mask(reduced_image_names, reduced_preds, class_name, class_category)
+
+                class_mask_float = get_binary_mask(reduced_preds, class_category)
+                attributions = get_attributions(model, class_category, class_mask_float, x_batch)
+
+                get_gradcam_image(reduced_image_names, a_batch, x_batch, class_name)
 
                 scores, histories = irof(model=model,
                     x_batch=image,
