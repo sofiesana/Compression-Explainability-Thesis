@@ -18,7 +18,7 @@ from evaluation import SceneNetEval
 
 from config_nyuv2 import *
 
-PRUNING_METHODS = ["baseline", "pt", "static"]
+PRUNING_METHODS = ["baseline", "disparse_pt", "disparse_static"]
 NUM_MODELS = 3
 PRUNING_RATIOS = [50, 70, 80, 90]
 
