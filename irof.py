@@ -376,8 +376,8 @@ if __name__ == "__main__":
     
     print(mean_aoc)
 
-    with open(RESULTS_ROOT + 'histories.pkl', 'wb') as file:
+    with open(os.path.join(RESULTS_ROOT, 'histories.pkl'), 'wb') as file:
         pickle.dump(class_histories, file)
     
-    with open(RESULTS_ROOT + 'scores.pkl', 'wb') as file:
+    with open(os.path.join(RESULTS_ROOT,'/scores.pkl'), 'wb') as file:
         pickle.dump(class_scores, file)
