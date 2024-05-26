@@ -336,7 +336,7 @@ if __name__ == "__main__":
 
                 y_batch = preds.argmax(axis=1)
                 
-                reduced_image_names = img_names[valid_indices]
+                reduced_image_names = np.array(img_names)[valid_indices]
                 y_batch = y_batch[valid_indices]
                 x_batch = image[valid_indices]
                 a_batch = attributions[valid_indices]
