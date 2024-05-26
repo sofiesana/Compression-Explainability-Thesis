@@ -60,6 +60,7 @@ mkdir -p $TMPDIR/pruned/pt/pt2
 mkdir -p $TMPDIR/pruned/pt/pt3
 
 # extract baselinme model from scratch to TMPDIR/pt
+
 tar xzf /scratch/$USER/pruned_models/pt/50/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
 tar xzf /scratch/$USER/pruned_models/pt/70/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
 tar xzf /scratch/$USER/pruned_models/pt/80/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1

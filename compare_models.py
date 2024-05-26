@@ -18,7 +18,7 @@ from evaluation import SceneNetEval
 
 from config_nyuv2 import *
 
-PRUNING_METHODS = ["baseline", "disparse_pt", "disparse_static"]
+PRUNING_METHODS = ["baseline", "pt", "static"]
 NUM_MODELS = 3
 PRUNING_RATIOS = [50, 70, 80, 90]
 
@@ -117,7 +117,7 @@ if __name__ == "__main__":
                         # need to actually retrieve the model
                         network_name = f"{dataset}_{method}_{ratio}"
 
-                        path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
+                        path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_disparse_{network_name}.pth")
                         net.load_state_dict(torch.load(path_to_model))
                         net.eval()
                         res = evaluator.get_final_metrics(net, test_loader)
