@@ -54,7 +54,6 @@ if __name__ == "__main__":
     dataset = 'nyuv2'
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    net = SceneNet(TASKS_NUM_CLASS).to(device)
     test_dataset = NYU_v2(DATA_ROOT, 'test')
 
     for method in PRUNING_METHODS:
@@ -62,6 +61,7 @@ if __name__ == "__main__":
             for model_num in range(1, NUM_MODELS+1):
 
                 if method == "baseline":
+                    net = SceneNet(TASKS_NUM_CLASS).to(device)
                     print("baseline model " + str(model_num))
                     test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
                     evaluator = SceneNetEval(
@@ -78,14 +78,17 @@ if __name__ == "__main__":
 
                 else:
                     for ratio in PRUNING_RATIOS:
+                        net = SceneNet(TASKS_NUM_CLASS).to(device)
                         print(f"{method} model {model_num} ratio {ratio}")
                         test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
                         evaluator = SceneNetEval(
                                 device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                         
+                        # need to actually retrieve the model
                         network_name = f"{dataset}_{method}_{ratio}"
 
                         path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
+                        net.load_state_dict(torch.load(path_to_model))
                         net.eval()
                         res = evaluator.get_final_metrics(net, test_loader)
                         print(res)
