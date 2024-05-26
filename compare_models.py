@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     for method in PRUNING_METHODS:
             method_results = {}
-            for model_num in range(NUM_MODELS):
+            for model_num in range(1, NUM_MODELS+1):
 
                 if method == "baseline":
                     print("baseline model " + str(model_num))
