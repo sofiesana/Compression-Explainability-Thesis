@@ -15,6 +15,12 @@ module load Python/3.8.16-GCCcore-11.2.0
 # activate virtual environment
 source $HOME/venvs/first/bin/activate
 
+# make a directory in the TMPDIR for the dataset
+mkdir $TMPDIR/nyuv2
+
+# extract data from scratch to TMPDIR/nyuv2
+tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
+
 ########### GET MODELS
 
 # make a directory in the TMPDIR for the baseline model
@@ -23,9 +29,9 @@ mkdir -p $TMPDIR/baseline/baseline2
 mkdir -p $TMPDIR/baseline/baseline3
 
 # extract baselinme model from scratch to TMPDIR/pt
-tar xzf /scratch/$USER/baseline/baseline1/results.tar.gz -C $TMPDIR/baseline1
-tar xzf /scratch/$USER/baseline/baseline2/results.tar.gz -C $TMPDIR/baseline2
-tar xzf /scratch/$USER/baseline/baseline3/results.tar.gz -C $TMPDIR/baseline3
+tar xzf /scratch/$USER/baseline/baseline1/results.tar.gz -C $TMPDIR/baseline/baseline1
+tar xzf /scratch/$USER/baseline/baseline2/results.tar.gz -C $TMPDIR/baseline/baseline2
+tar xzf /scratch/$USER/baseline/baseline3/results.tar.gz -C $TMPDIR/baseline/baseline3
 
 # make a directory in the TMPDIR for the pruned models
 mkdir -p $TMPDIR/pruned/static/static1
