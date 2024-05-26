@@ -353,9 +353,9 @@ if __name__ == "__main__":
                 get_gradcam_image(reduced_image_names, a_batch, x_batch, category_name)
 
                 scores, histories = irof(model=model,
-                                         x_batch=image,
+                                         x_batch=x_batch,
                                          y_batch=y_batch,
-                                         a_batch=attributions,
+                                         a_batch=a_batch,
                                          device=device)
 
                 if scores is not None:
