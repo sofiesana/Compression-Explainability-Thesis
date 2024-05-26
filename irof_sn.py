@@ -315,8 +315,8 @@ if __name__ == "__main__":
             
             valid_indices = []
 
-            class_mask_float = get_binary_mask(preds, category, task)
-            attributions = get_attributions(model, category, class_mask_float, image, task)
+            class_mask_float = get_binary_mask(preds, category_name, task)
+            attributions = get_attributions(model, category_name, class_mask_float, image, task)
 
 
             for i, img_seg in enumerate(torch.argmax(preds, axis=1)):
@@ -345,10 +345,10 @@ if __name__ == "__main__":
                 a_batch = attributions[valid_indices]
                 reduced_preds = preds[valid_indices]
 
-                get_resized_binary_mask(reduced_image_names, reduced_preds, category, category_index, task)
+                get_resized_binary_mask(reduced_image_names, reduced_preds, category_name, category_index, task)
 
-                class_mask_float = get_binary_mask(reduced_preds, category, task)
-                attributions = get_attributions(model, category, class_mask_float, x_batch, task)
+                class_mask_float = get_binary_mask(reduced_preds, category_name, task)
+                attributions = get_attributions(model, category_name, class_mask_float, x_batch, task)
 
                 get_gradcam_image(reduced_image_names, a_batch, x_batch, category_name)
 
@@ -359,12 +359,12 @@ if __name__ == "__main__":
                                          device=device)
 
                 if scores is not None:
-                    if category not in class_scores.keys():
-                        class_scores[category] = []
-                        class_histories[category] = []
+                    if category_name not in class_scores.keys():
+                        class_scores[category_name] = []
+                        class_histories[category_name] = []
 
-                    class_scores[category].extend(scores)
-                    class_histories[category].extend(histories)
+                    class_scores[category_name].extend(scores)
+                    class_histories[category_name].extend(histories)
 
     print(class_scores)
 
@@ -372,9 +372,9 @@ if __name__ == "__main__":
 
     for category in class_scores.keys():
         category_name = category if task == "seg" else f"comb_{category}"
-        mean_aoc[category] = np.mean(np.array(class_scores[category]))
-        plot_all_irof_curves(class_histories[category], category_name)
-        plot_avg_irof_curve(class_histories[category], category_name)
+        mean_aoc[category_name] = np.mean(np.array(class_scores[category_name]))
+        plot_all_irof_curves(class_histories[category_name], category_name)
+        plot_avg_irof_curve(class_histories[category_name], category_name)
 
     print(mean_aoc)
 
