@@ -315,6 +315,10 @@ if __name__ == "__main__":
             
             valid_indices = []
 
+            class_mask_float = get_binary_mask(preds, category, task)
+            attributions = get_attributions(model, category, class_mask_float, image, task)
+
+
             for i, img_seg in enumerate(torch.argmax(preds, axis=1)):
                 if task == "seg" and category_index not in img_seg:
                     print(category_name, " not in image ", str(img_names[i]))
