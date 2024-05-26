@@ -247,6 +247,8 @@ if __name__ == "__main__":
         '--pruned', type=str, help='is the model pruned?: y, n', default="n")
     parser.add_argument(
         '--task', type=str, help='seg, sn', default="None")
+    parser.add_argument(
+        '--irof', type=str, help='mean, uniform', default="mean")
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -257,6 +259,7 @@ if __name__ == "__main__":
     pruned = args.pruned
     head = args.head
     task = args.task
+    irof_version = args.irof
     if task == "None":
         task = None
 
@@ -299,7 +302,7 @@ if __name__ == "__main__":
             class_name = sem_idx_to_class[class_category]
 
             irof = quantus.IROF(segmentation_method="slic",
-                                    perturb_baseline="mean",
+                                    perturb_baseline=irof_version,
                                     perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
                                     return_aggregate=False,
                                     class_category=class_category,
