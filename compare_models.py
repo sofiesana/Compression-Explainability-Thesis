@@ -115,9 +115,9 @@ if __name__ == "__main__":
                                 device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                         
                         # need to actually retrieve the model
-                        network_name = f"{dataset}_{method}_{ratio}"
+                        network_name = f"{dataset}_disparse_{method}_{ratio}"
 
-                        path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_disparse_{network_name}.pth")
+                        path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
                         net.load_state_dict(torch.load(path_to_model))
                         net.eval()
                         res = evaluator.get_final_metrics(net, test_loader)
