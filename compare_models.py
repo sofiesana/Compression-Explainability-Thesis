@@ -11,6 +11,7 @@ from torch.autograd import Variable
 from dataloaders import *
 import matplotlib.pyplot as plt
 from scene_net import *
+import pickle
 
 from evaluation import SceneNetEval
 
@@ -49,6 +50,35 @@ def save_results(results, filename):
     with open(filename, 'wb') as f:
         pickle.dump(results, f)
 
+def plot_mean_metrics(results, metric_name, save_path):
+    plt.figure(figsize=(12, 8))
+    mean_metrics = {}
+    
+    for method, method_results in results.items():
+        if method == "baseline":
+            mean_metrics[method] = np.mean([metrics[metric_name] for metrics in method_results.values()])
+        else:
+            mean_metrics[method] = {}
+            for ratio in PRUNING_RATIOS:
+                ratio_metrics = [metrics[ratio][metric_name] for metrics in method_results.values() if ratio in metrics]
+                mean_metrics[method][ratio] = np.mean(ratio_metrics)
+    
+    for method, metrics in mean_metrics.items():
+        if method == "baseline":
+            x = [0]
+            y = [metrics]
+        else:
+            x = PRUNING_RATIOS
+            y = [metrics[ratio] for ratio in PRUNING_RATIOS]
+        plt.plot(x, y, marker='o', label=f"{method} mean")
+
+    plt.xlabel("Pruning Ratio (%)" if method != "baseline" else "Baseline")
+    plt.ylabel(metric_name)
+    plt.title(f"Mean {metric_name} across pruning methods")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(save_path)
+    plt.close()
 
 if __name__ == "__main__":
     dataset = 'nyuv2'
@@ -108,6 +138,10 @@ if __name__ == "__main__":
     # Plot the comparison of mIoU and pixel accuracy
     plot_metrics(model_results, 'mIoUs', os.path.join(RESULTS_ROOT, 'mIoUs_comparison.png'))
     plot_metrics(model_results, 'pixelAccs', os.path.join(RESULTS_ROOT, 'pixelAccs_comparison.png'))
+
+    # Plot the mean comparison of mIoU and pixel accuracy
+    plot_mean_metrics(model_results, 'mIoUs', os.path.join(RESULTS_ROOT, 'mean_mIoUs_comparison.png'))
+    plot_mean_metrics(model_results, 'pixelAccs', os.path.join(RESULTS_ROOT, 'mean_pixelAccs_comparison.png'))
 
                         
             
