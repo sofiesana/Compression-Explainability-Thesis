@@ -18,9 +18,9 @@ source $HOME/venvs/first/bin/activate
 ########### GET MODELS
 
 # make a directory in the TMPDIR for the baseline model
-mkdir $TMPDIR/baseline/baseline1
-mkdir $TMPDIR/baseline/baseline2
-mkdir $TMPDIR/baseline/baseline3
+mkdir -p $TMPDIR/baseline/baseline1
+mkdir -p $TMPDIR/baseline/baseline2
+mkdir -p $TMPDIR/baseline/baseline3
 
 # extract baselinme model from scratch to TMPDIR/pt
 tar xzf /scratch/$USER/baseline/baseline1/results.tar.gz -C $TMPDIR/baseline1
@@ -28,9 +28,9 @@ tar xzf /scratch/$USER/baseline/baseline2/results.tar.gz -C $TMPDIR/baseline2
 tar xzf /scratch/$USER/baseline/baseline3/results.tar.gz -C $TMPDIR/baseline3
 
 # make a directory in the TMPDIR for the pruned models
-mkdir $TMPDIR/pruned/static/static1
-mkdir $TMPDIR/pruned/static/static2
-mkdir $TMPDIR/pruned/static/static3
+mkdir -p $TMPDIR/pruned/static/static1
+mkdir -p $TMPDIR/pruned/static/static2
+mkdir -p $TMPDIR/pruned/static/static3
 
 # extract baselinme model from scratch to TMPDIR/pt
 tar xzf /scratch/$USER/pruned_models/static/50/static1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
@@ -49,9 +49,9 @@ tar xzf /scratch/$USER/pruned_models/static/80/static3/trained_results.tar.gz -C
 tar xzf /scratch/$USER/pruned_models/static/90/static3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
 
 # make a directory in the TMPDIR for the pruned models
-mkdir $TMPDIR/pruned/pt/pt1
-mkdir $TMPDIR/pruned/pt/pt2
-mkdir $TMPDIR/pruned/pt/pt3
+mkdir -p $TMPDIR/pruned/pt/pt1
+mkdir -p $TMPDIR/pruned/pt/pt2
+mkdir -p $TMPDIR/pruned/pt/pt3
 
 # extract baselinme model from scratch to TMPDIR/pt
 tar xzf /scratch/$USER/pruned_models/pt/50/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
