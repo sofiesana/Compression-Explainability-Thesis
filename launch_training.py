@@ -125,7 +125,7 @@ if __name__ == "__main__":
         amp_criterion = DiSparse_SceneNetLoss(
             dataset, TASKS, TASKS_NUM_CLASS, LAMBDAS, device, DATA_ROOT)
         net = disparse_dynamic_train(net, dataset, criterion, amp_criterion, optimizer, scheduler, train_loader, val_loader,
-                                     network_name, batch_update, D, config_dict, max_iters=3, save_model=True, log_file=log_file, method=method, dest=dest)
+                                     network_name, batch_update, D, config_dict, max_iters=15000, save_model=True, log_file=log_file, method=method, dest=dest)
     elif not pretrained:
         net = train(net, dataset, criterion, optimizer, scheduler, train_loader, val_loader, network_name,
                     batch_update, max_iters=MAX_ITERS, log_file=log_file, save_model=True, method="baseline", dest=dest)
