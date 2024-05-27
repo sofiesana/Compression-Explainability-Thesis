@@ -1,6 +1,4 @@
 import os
-import random
-import cv2
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -12,6 +10,7 @@ from dataloaders import *
 import matplotlib.pyplot as plt
 from scene_net import *
 import pickle
+from prune_utils import *
 
 from evaluation import SceneNetEval
 
@@ -108,12 +107,19 @@ if __name__ == "__main__":
 
                 else:
                     for ratio in PRUNING_RATIOS:
-                        net = SceneNet(TASKS_NUM_CLASS).to(device)
+                        
                         print(f"{method} model {model_num} ratio {ratio}")
                         test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
                         evaluator = SceneNetEval(
                                 device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                         
+                        net = SceneNet(TASKS_NUM_CLASS).to(device)
+
+                        for module in net.modules():
+                            # Check if it's basic block
+                            if isinstance(module, nn.modules.conv.Conv2d) or isinstance(module, nn.modules.Linear):
+                                module = prune.identity(module, 'weight')
+
                         # need to actually retrieve the model
                         network_name = f"{dataset}_disparse_{method}_{ratio}"
 
