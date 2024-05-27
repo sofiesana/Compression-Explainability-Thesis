@@ -277,8 +277,6 @@ if __name__ == "__main__":
     sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
 
     for i, gt_batch in enumerate(test_loader):
-        if i == 2:
-            break
         
         model.eval()
         gt_batch["img"] = Variable(gt_batch["img"]).to(device)
