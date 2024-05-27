@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=attempt1
-#SBATCH --time=00:15:00
+#SBATCH --time=01:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1

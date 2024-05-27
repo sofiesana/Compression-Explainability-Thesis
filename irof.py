@@ -166,7 +166,6 @@ def get_resized_binary_mask(img_names, preds, seg_class, class_category):
 
         path = os.path.join(RESULTS_ROOT, class_name, name+'_predicted_mask.jpg')
         masked_pixels.save(path)
-        print("masked save location:", RESULTS_ROOT, name+'_predicted_mask_'+seg_class+'.jpg')
 
 def get_gradcam_image(img_names, attributions, image, seg_class):
     for i in range(len(image)):
@@ -179,7 +178,6 @@ def get_gradcam_image(img_names, attributions, image, seg_class):
         cam_image_final = Image.fromarray(cam_image)
         path = os.path.join(RESULTS_ROOT, class_name, name+'_grad_cam.jpg')
         cam_image_final.save(path)
-        print("gradcam save location:", RESULTS_ROOT, name+'_grad_cam_'+seg_class+'.jpg')
 
 def get_attributions(model, class_category, class_mask_float, image):
     target_layers = [model.backbone]
@@ -220,8 +218,6 @@ def plot_avg_irof_curve(histories, class_name):
     # Step 4: Compute the mean along axis 0, ignoring NaN values
     avg_curve = np.nanmean(array, axis=0)
 
-    print('avg_curve shape:', avg_curve.shape)
-    print('avg_curve:', avg_curve)
     plt.plot(range(len(avg_curve)), avg_curve, marker='o')
     plt.title('AOC Curve')
     plt.xlabel('Number of Segments Removed')
@@ -360,9 +356,6 @@ if __name__ == "__main__":
 
                     class_scores[class_category].extend(scores)
                     class_histories[class_category].extend(histories)
-        
-    
-    print(class_scores)
     
     mean_aoc = {}
 
@@ -371,8 +364,6 @@ if __name__ == "__main__":
         mean_aoc[category] = np.mean(np.array(class_scores[category]))
         plot_all_irof_curves(class_histories[category], class_name)
         plot_avg_irof_curve(class_histories[category], class_name)
-    
-    print(mean_aoc)
 
     with open(os.path.join(RESULTS_ROOT, 'histories.pkl'), 'wb') as file:
         pickle.dump(class_histories, file)
