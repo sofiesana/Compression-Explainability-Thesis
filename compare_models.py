@@ -26,7 +26,7 @@ RESULTS_ROOT = os.path.join(os.environ.get('TMPDIR'), 'results')
 baseline_results = {}
 model_results = {}
 
-def plot_metrics(results, metric_name):
+def plot_metrics(results, metric_name, save_path):
     plt.figure(figsize=(12, 8))
     for method, method_results in results.items():
         for model_num, metrics in method_results.items():
@@ -43,11 +43,8 @@ def plot_metrics(results, metric_name):
     plt.title(f"Comparison of {metric_name} across models and pruning methods")
     plt.legend()
     plt.grid(True)
-    plt.show()
-
-def save_results(results, filename):
-    with open(filename, 'wb') as f:
-        pickle.dump(results, f)
+    plt.savefig(save_path)
+    plt.close()
 
 def plot_mean_metrics(results, metric_name, save_path):
     plt.figure(figsize=(12, 8))
