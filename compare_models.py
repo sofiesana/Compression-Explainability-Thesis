@@ -26,6 +26,10 @@ RESULTS_ROOT = os.path.join(os.environ.get('TMPDIR'), 'results')
 baseline_results = {}
 model_results = {}
 
+def save_results(results, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(results, f)
+
 def plot_metrics(results, metric_name, save_path):
     plt.figure(figsize=(12, 8))
     for method, method_results in results.items():
