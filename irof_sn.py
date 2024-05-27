@@ -158,7 +158,7 @@ def load_model(device, pruned, task):
 def generate_xyz_combinations():
     coordinates = [-1, 1]
     combinations = list(itertools.product(coordinates, repeat=3))
-    return combinations
+    return {idx: comb for idx, comb in enumerate(combinations)}
 
 def get_resized_binary_mask(img_names, preds, category, category_index, task):
     resized_preds = F.interpolate(preds, (480, 640))
@@ -264,6 +264,8 @@ if __name__ == "__main__":
     if task == "None":
         task = None
 
+    print("task:", task)
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = load_model(device, pruned, task)
 
@@ -303,6 +305,7 @@ if __name__ == "__main__":
         for category_index, category in categories.items():
 
             category_name = category if task == "seg" else f"comb_{category_index}"
+            print(category_name)
 
             irof = quantus.IROF(segmentation_method="slic",
                                 perturb_baseline=irof_version,
@@ -310,7 +313,8 @@ if __name__ == "__main__":
                                 return_aggregate=False,
                                 class_category=category,
                                 class_name=category_name,
-                                num_classes=len(categories)
+                                num_classes=len(categories),
+                                task=task
                                 )
             
             valid_indices = []
@@ -356,6 +360,7 @@ if __name__ == "__main__":
                                          x_batch=x_batch,
                                          y_batch=y_batch,
                                          a_batch=a_batch,
+                                         true_batch=gt_batch["normal"],
                                          device=device)
 
                 if scores is not None:
