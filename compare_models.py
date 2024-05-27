@@ -20,6 +20,8 @@ from config_nyuv2 import *
 PRUNING_METHODS = ["baseline", "pt", "static"]
 NUM_MODELS = 3
 PRUNING_RATIOS = [50, 70, 80, 90]
+SEG_METRICS = ["mIoU", "Pixel Acc", "err"]
+SN_METRICS = ["Angle Mean", "Angle Median", "Angle 11.25", "Angle 22.5", "Angle 30", "Angle 45"]
 
 RESULTS_ROOT = os.path.join(os.environ.get('TMPDIR'), 'results')
 
@@ -30,52 +32,67 @@ def save_results(results, filename):
     with open(filename, 'wb') as f:
         pickle.dump(results, f)
 
-def plot_metrics(results, metric_name, save_path):
-    plt.figure(figsize=(12, 8))
+def plot_metrics(results, metric_name, save_path, task):
+    LINE_STYLES = ['-', '--', '-.', ':']
+    plt.figure(figsize=(10, 8))
+    colors = {'baseline': 'r', 'pt': 'b', 'static': 'g', 'dynamic': 'c'}  # Add other methods as needed
+    baseline_value = None
+    
     for method, method_results in results.items():
+        color = colors.get(method, 'k')  # Default to 'k' (black) if method not in colors
         for model_num, metrics in method_results.items():
+            line_style = LINE_STYLES[model_num % len(LINE_STYLES)]  # Cycle through line styles
+            
             if method == "baseline":
-                x = [0]
-                y = [metrics[metric_name]]
+              y = metrics[task][metric_name]
+              plt.axhline(y=y, color=color, linestyle=line_style, label=f"{method} model {model_num}", linewidth=2)
             else:
                 x = PRUNING_RATIOS
-                y = [metrics[ratio][metric_name] for ratio in PRUNING_RATIOS]
-            plt.plot(x, y, marker='o', label=f"{method} model {model_num}")
+                y = [metrics[ratio][task][metric_name] for ratio in PRUNING_RATIOS]
+                plt.plot(x, y, marker='o', color=color, linestyle=line_style, label=f"{method} model {model_num}", markersize=10, linewidth=2)
 
-    plt.xlabel("Pruning Ratio (%)" if method != "baseline" else "Baseline")
-    plt.ylabel(metric_name)
-    plt.title(f"Comparison of {metric_name} across models and pruning methods")
-    plt.legend()
+    if baseline_value is not None:
+        plt.axhline(y=baseline_value, color=colors['baseline'], linestyle='--', label='baseline', linewidth=2)
+
+    plt.xlabel("Pruning Ratio (%)", fontsize=14)
+    plt.ylabel(metric_name, fontsize=14)
+    plt.title(f"Comparison of {metric_name} across models and pruning methods", fontsize=16)
+    plt.xticks(PRUNING_RATIOS, fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(fontsize=12, loc='upper left', bbox_to_anchor=(1, 1), ncol=1)
     plt.grid(True)
     plt.savefig(save_path)
     plt.close()
 
-def plot_mean_metrics(results, metric_name, save_path):
-    plt.figure(figsize=(12, 8))
+def plot_mean_metrics(results, metric_name, save_path, task):
+    plt.figure(figsize=(6, 6))
+    colors = {'baseline': 'r', 'pt': 'b', 'static': 'g', 'dynamic': 'c'}  # Add other methods as needed
     mean_metrics = {}
     
     for method, method_results in results.items():
         if method == "baseline":
-            mean_metrics[method] = np.mean([metrics[metric_name] for metrics in method_results.values()])
+            baseline_value = np.mean([metrics[task][metric_name] for metrics in method_results.values()])
         else:
             mean_metrics[method] = {}
             for ratio in PRUNING_RATIOS:
-                ratio_metrics = [metrics[ratio][metric_name] for metrics in method_results.values() if ratio in metrics]
+                ratio_metrics = [metrics[ratio][task][metric_name] for metrics in method_results.values() if ratio in metrics]
                 mean_metrics[method][ratio] = np.mean(ratio_metrics)
     
     for method, metrics in mean_metrics.items():
-        if method == "baseline":
-            x = [0]
-            y = [metrics]
-        else:
-            x = PRUNING_RATIOS
-            y = [metrics[ratio] for ratio in PRUNING_RATIOS]
-        plt.plot(x, y, marker='o', label=f"{method} mean")
+        color = colors.get(method, 'k')  # Default to 'k' (black) if method not in colors
+        x = PRUNING_RATIOS
+        y = [metrics[ratio] for ratio in PRUNING_RATIOS]
+        plt.plot(x, y, marker='o', color=color, linestyle='-', label=f"{method} mean", markersize=10, linewidth=2)
+    
+    if 'baseline' in colors:
+        plt.axhline(y=baseline_value, color=colors['baseline'], linestyle='-', label=f"baseline model", linewidth=2)
 
-    plt.xlabel("Pruning Ratio (%)" if method != "baseline" else "Baseline")
-    plt.ylabel(metric_name)
-    plt.title(f"Mean {metric_name} across pruning methods")
-    plt.legend()
+    plt.xlabel("Pruning Ratio (%)", fontsize=14)
+    plt.ylabel(metric_name, fontsize=14)
+    plt.title(f"Mean {metric_name} across pruning methods", fontsize=16)
+    plt.xticks(PRUNING_RATIOS, fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.legend(fontsize=12)
     plt.grid(True)
     plt.savefig(save_path)
     plt.close()
@@ -85,6 +102,12 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     test_dataset = NYU_v2(DATA_ROOT, 'test')
+
+    sn_path = os.path.join(RESULTS_ROOT, "sn")
+    seg_path = os.path.join(RESULTS_ROOT, "seg")
+
+    os.mkdir(sn_path)
+    os.mkdir(seg_path)
 
     for method in PRUNING_METHODS:
             method_results = {}
@@ -142,13 +165,14 @@ if __name__ == "__main__":
     results_path = os.path.join(RESULTS_ROOT, 'model_results.pkl')
     save_results(model_results, results_path)
 
-    # Plot the comparison of mIoU and pixel accuracy
-    plot_metrics(model_results, 'mIoUs', os.path.join(RESULTS_ROOT, 'mIoUs_comparison.png'))
-    plot_metrics(model_results, 'pixelAccs', os.path.join(RESULTS_ROOT, 'pixelAccs_comparison.png'))
+    for metric in SEG_METRICS:
+        plot_metrics(model_results, metric, os.path.join(seg_path, metric+'_comparison.png'), 'seg')
+        plot_mean_metrics(model_results, metric, os.path.join(seg_path, 'mean_' + metric +'_comparison.png'), 'seg')
 
-    # Plot the mean comparison of mIoU and pixel accuracy
-    plot_mean_metrics(model_results, 'mIoUs', os.path.join(RESULTS_ROOT, 'mean_mIoUs_comparison.png'))
-    plot_mean_metrics(model_results, 'pixelAccs', os.path.join(RESULTS_ROOT, 'mean_pixelAccs_comparison.png'))
+    for metric in SN_METRICS:
+        plot_metrics(model_results, metric, os.path.join(sn_path, metric+'_comparison.png'), 'sn')
+        plot_mean_metrics(model_results, metric, os.path.join(sn_path, 'mean_' + metric +'_comparison.png'), 'sn')
+
 
                         
             
