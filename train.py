@@ -212,7 +212,7 @@ def disparse_dynamic_train(net, dataset, criterion, amp_criterion, optimizer, sc
                 print(f"Sparsity Before Prune: {s}")
                 net = dynamic_disparse_prune(
                     net, decay.get_dr(), density_dict, 1-S, device, iteration)
-                net = copy_v2(net)
+                net = deepcopy_pruned_net_v2(net)
                 s = print_sparsity(net, False)
                 print(f"Sparsity After Prune: {s}")
                 new_optimizer = torch.optim.Adam(
