@@ -155,7 +155,7 @@ def disparse_dynamic_train(net, dataset, criterion, amp_criterion, optimizer, sc
     flag = False
     best_test_loss = None
     lr = 0
-    save_int = 100 if dataset == "taskonomy" else 5000
+    save_int = 10000 if dataset == "taskonomy" else 5000
     test_int = 10000 if dataset == "taskonomy" else 50
 
     while True:
