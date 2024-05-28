@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=attempt1
-#SBATCH --time=00:15:00
+#SBATCH --time=00:25:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
@@ -75,6 +75,30 @@ tar xzf /scratch/$USER/pruned_models/pt/50/baseline3/trained_results.tar.gz -C $
 tar xzf /scratch/$USER/pruned_models/pt/70/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
 tar xzf /scratch/$USER/pruned_models/pt/80/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
 tar xzf /scratch/$USER/pruned_models/pt/90/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
+
+###### DYNAMIC
+
+# make a directory in the TMPDIR for the pruned models
+mkdir -p $TMPDIR/pruned/dynamic/dynamic1
+mkdir -p $TMPDIR/pruned/dynamic/dynamic2
+mkdir -p $TMPDIR/pruned/dynamic/dynamic3
+
+# extract baselinme model from scratch to TMPDIR/dynamic
+
+tar xzf /scratch/$USER/pruned_models/dynamic/50/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
+tar xzf /scratch/$USER/pruned_models/dynamic/70/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
+tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
+tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
+
+tar xzf /scratch/$USER/pruned_models/dynamic/50/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
+tar xzf /scratch/$USER/pruned_models/dynamic/70/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
+tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
+tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
+
+tar xzf /scratch/$USER/pruned_models/dynamic/50/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
+tar xzf /scratch/$USER/pruned_models/dynamic/70/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
+tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
+tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
 
 ########### GET CODE
 
