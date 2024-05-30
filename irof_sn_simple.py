@@ -280,7 +280,8 @@ if __name__ == "__main__":
                                 return_aggregate=False,
                                 class_category=None,
                                 class_name=None,
-                                num_classes=40
+                                num_classes=40,
+                                task = task
                                 )
 
         attributions = get_sn_attributions(model, image)
