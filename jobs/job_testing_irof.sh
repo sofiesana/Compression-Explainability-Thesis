@@ -50,5 +50,5 @@ mkdir $TMPDIR/results
 python3 irof.py --head all --pruned n --task seg --irof mean
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/irof/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/irof/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/irof/seg/job_${SLURM_JOBID}
+tar czvf /scratch/$USER/irof/seg/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
