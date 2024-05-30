@@ -47,8 +47,8 @@ cd $TMPDIR/code/Compression-Explainability-Thesis
 mkdir $TMPDIR/results
 
 # Run training
-python3 irof.py --head all --pruned n --task sn --irof mean
+python3 irof_sn_simple.py --head all --pruned n --task sn --irof mean
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/irof/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/irof/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/irof/sn/job_${SLURM_JOBID}
+tar czvf /scratch/$USER/irof/sn/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
