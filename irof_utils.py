@@ -125,7 +125,7 @@ class EntireOutputTarget:
         return model_output.sum()
 
 def load_model(device, pruned, task, model_path):
-    model = SceneNet(TASKS_NUM_CLASS, task=task).to(device)
+    model = SceneNetIROF(TASKS_NUM_CLASS, task=task).to(device)
 
     if pruned == 'y':
         for module in model.modules():
