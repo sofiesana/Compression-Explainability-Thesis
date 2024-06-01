@@ -301,7 +301,8 @@ if __name__ == "__main__":
                                     return_aggregate=False,
                                     class_category=class_category,
                                     class_name=class_name,
-                                    num_classes=40
+                                    num_classes=40, 
+                                    task = task
                                     )
 
             class_mask_float = get_binary_mask(preds, class_category)
