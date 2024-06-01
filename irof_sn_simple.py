@@ -157,7 +157,7 @@ def load_model(device, pruned, task):
 
     return model
 
-def get_gradcam_image(img_names, attributions, image, class_name):
+def get_gradcam_image_sn(img_names, attributions):
     for i in range(len(image)):
         name = img_names[i]
         og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
@@ -166,7 +166,7 @@ def get_gradcam_image(img_names, attributions, image, class_name):
         cam_image = show_cam_on_image(og_img, attributions[i], use_rgb=True)
 
         cam_image_final = Image.fromarray(cam_image)
-        path = os.path.join(RESULTS_ROOT, class_name, name+'_grad_cam.jpg')
+        path = os.path.join(RESULTS_ROOT, name+'_grad_cam.jpg')
         cam_image_final.save(path)
 
 def get_sn_image(img_names, preds):
@@ -285,6 +285,7 @@ if __name__ == "__main__":
                                 )
 
         attributions = get_sn_attributions(model, image)
+        get_gradcam_image_sn(img_names, attributions)
 
         scores, histories = irof(model=model,
                 x_batch=gt_batch["img"],
