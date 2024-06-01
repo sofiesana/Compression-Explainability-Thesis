@@ -153,6 +153,17 @@ def get_resized_binary_mask(img_names, preds, class_name, class_category):
         path = os.path.join(RESULTS_ROOT, class_name, name+'_predicted_mask.jpg')
         masked_pixels.save(path)
 
+def get_sn_image(img_names, preds):
+    ### requires normalized predictions
+    for i, pred in enumerate(preds):
+        name = img_names[i]
+        sn = F.interpolate(pred, (480, 640))
+        sn_output = np.uint8(255*sn.detach().cpu().numpy())
+        image_array = np.transpose(sn_output[2], (1, 2, 0))
+        image = Image.fromarray(image_array)
+        path = os.path.join(RESULTS_ROOT, name+'_pred_sn.jpg')
+        image.save(path)
+
 def get_gradcam_image(img_names, attributions, image, class_name = 'None'):
     for i in range(len(image)):
         name = img_names[i]
@@ -168,7 +179,7 @@ def get_gradcam_image(img_names, attributions, image, class_name = 'None'):
             path = os.path.join(RESULTS_ROOT, name+'_grad_cam.jpg')
         cam_image_final.save(path)
 
-def get_attributions(model, class_category = 'None', class_mask_float = 'None', image):
+def get_attributions(model, image, class_category = None, class_mask_float = None):
     target_layers = [model.backbone]
     if class_category is not None:
         targets = [SemanticSegmentationTarget(class_category, class_mask) for class_mask in class_mask_float]
@@ -185,15 +196,19 @@ def get_binary_mask(preds, class_category):
     class_mask_float = np.float32(class_mask == class_category)
     return class_mask_float
 
-def plot_all_irof_curves(histories, class_name):
+def plot_all_irof_curves(histories, class_name = None):
     for history in histories:
         history = np.array(history)
         plt.plot(range(len(history)), history, marker='o')
     plt.title('AOC Curve')
     plt.xlabel('Number of Segments Removed')
-    plt.ylabel('Class ' + class_name + ' Score')
     plt.grid(True)
-    path = os.path.join(RESULTS_ROOT, class_name, 'all_irof.png')
+    if class_name is not None:
+        plt.ylabel('Class \'' + class_name + '\' Score')
+        path = os.path.join(RESULTS_ROOT, class_name, 'all_irof.png')
+    else:
+        plt.ylabel('Class Score')
+        path = os.path.join(RESULTS_ROOT, 'all_irof.png')
     plt.savefig(path)
     plt.close()
 
@@ -213,8 +228,14 @@ def plot_avg_irof_curve(histories, class_name):
     plt.plot(range(len(avg_curve)), avg_curve, marker='o')
     plt.title('AOC Curve')
     plt.xlabel('Number of Segments Removed')
-    plt.ylabel('Class ' + class_name + ' Score')
     plt.grid(True)
+
+    if class_name is not None:
+        plt.ylabel('Class \'' + class_name + '\' Score')
+        path = os.path.join(RESULTS_ROOT, class_name, 'avg_irof.png')
+    else:
+        plt.ylabel('Score')
+        path = os.path.join(RESULTS_ROOT, 'avg_irof.png')
     path = os.path.join(RESULTS_ROOT, class_name, 'avg_irof.png')
     plt.savefig(path)
     plt.close()
