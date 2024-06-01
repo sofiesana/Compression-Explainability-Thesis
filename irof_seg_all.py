@@ -30,7 +30,7 @@ PRUNING_METHODS = ["baseline", "pt", "static", "dynamic"]
 NUM_MODELS = 3
 PRUNING_RATIOS = [50, 70, 80, 90]
 
-def run_irof_seg(model, test_loader,):
+def run_irof_seg(model, test_loader, location):
 
     class_scores = {}
     class_histories = {}
@@ -132,7 +132,7 @@ def run_irof_seg(model, test_loader,):
 
     return class_scores, class_histories
 
-def run_irof_sn(model, test_loader):
+def run_irof_sn(model, test_loader, location):
     all_scores = []
     all_histories = []
 
