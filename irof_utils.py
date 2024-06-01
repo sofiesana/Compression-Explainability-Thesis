@@ -139,7 +139,7 @@ def load_model(device, pruned, task):
 
     return model
 
-def get_resized_binary_mask(img_names, preds, class_name, class_category):
+def get_resized_binary_mask(img_names, preds, class_name, class_category, location):
     resized_preds = F.interpolate(preds, (480, 640))
     normalized_masks = torch.nn.functional.softmax(resized_preds, dim=1)
     class_mask = normalized_masks.argmax(axis=1).detach().cpu().numpy()
@@ -150,10 +150,10 @@ def get_resized_binary_mask(img_names, preds, class_name, class_category):
         img = class_mask_uint8[i, :, :, None]
         masked_pixels = Image.fromarray(np.repeat(img, 3, axis=-1))
 
-        path = os.path.join(RESULTS_ROOT, class_name, name+'_predicted_mask.jpg')
+        path = os.path.join(RESULTS_ROOT, location, class_name, name+'_predicted_mask.jpg')
         masked_pixels.save(path)
 
-def get_sn_image(img_names, preds):
+def get_sn_image(img_names, preds, location):
     ### requires normalized predictions
     for i, pred in enumerate(preds):
         name = img_names[i]
@@ -161,10 +161,10 @@ def get_sn_image(img_names, preds):
         sn_output = np.uint8(255*sn.detach().cpu().numpy())
         image_array = np.transpose(sn_output[2], (1, 2, 0))
         image = Image.fromarray(image_array)
-        path = os.path.join(RESULTS_ROOT, name+'_pred_sn.jpg')
+        path = os.path.join(RESULTS_ROOT, location, name+'_pred_sn.jpg')
         image.save(path)
 
-def get_gradcam_image(img_names, attributions, image, class_name = 'None'):
+def get_gradcam_image(img_names, attributions, image, location, class_name = 'None'):
     for i in range(len(image)):
         name = img_names[i]
         og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
@@ -174,9 +174,9 @@ def get_gradcam_image(img_names, attributions, image, class_name = 'None'):
 
         cam_image_final = Image.fromarray(cam_image)
         if class_name is not None:
-            path = os.path.join(RESULTS_ROOT, class_name, name+'_grad_cam.jpg')
+            path = os.path.join(RESULTS_ROOT, location, class_name, name+'_grad_cam.jpg')
         else:
-            path = os.path.join(RESULTS_ROOT, name+'_grad_cam.jpg')
+            path = os.path.join(RESULTS_ROOT, location, name+'_grad_cam.jpg')
         cam_image_final.save(path)
 
 def get_attributions(model, image, class_category = None, class_mask_float = None):
@@ -196,23 +196,23 @@ def get_binary_mask(preds, class_category):
     class_mask_float = np.float32(class_mask == class_category)
     return class_mask_float
 
-def plot_all_irof_curves(histories, class_name = None):
+def plot_all_irof_curves(histories, location, class_name = None):
     for history in histories:
         history = np.array(history)
         plt.plot(range(len(history)), history, marker='o')
-    plt.title('AOC Curve')
+    plt.title('IROF Curve')
     plt.xlabel('Number of Segments Removed')
     plt.grid(True)
     if class_name is not None:
         plt.ylabel('Class \'' + class_name + '\' Score')
-        path = os.path.join(RESULTS_ROOT, class_name, 'all_irof.png')
+        path = os.path.join(RESULTS_ROOT, location, class_name, 'all_irof.png')
     else:
         plt.ylabel('Class Score')
-        path = os.path.join(RESULTS_ROOT, 'all_irof.png')
+        path = os.path.join(RESULTS_ROOT, location, 'all_irof.png')
     plt.savefig(path)
     plt.close()
 
-def plot_avg_irof_curve(histories, class_name):
+def plot_avg_irof_curve(histories, location, class_name = None):
     # Step 1: Find the length of the longest list
     max_length = max(len(lst) for lst in histories)
 
@@ -226,17 +226,17 @@ def plot_avg_irof_curve(histories, class_name):
     avg_curve = np.nanmean(array, axis=0)
 
     plt.plot(range(len(avg_curve)), avg_curve, marker='o')
-    plt.title('AOC Curve')
+    plt.title('IROF Curve')
     plt.xlabel('Number of Segments Removed')
     plt.grid(True)
 
     if class_name is not None:
         plt.ylabel('Class \'' + class_name + '\' Score')
-        path = os.path.join(RESULTS_ROOT, class_name, 'avg_irof.png')
+        path = os.path.join(RESULTS_ROOT, location, class_name, 'avg_irof.png')
     else:
         plt.ylabel('Score')
         path = os.path.join(RESULTS_ROOT, 'avg_irof.png')
-    path = os.path.join(RESULTS_ROOT, class_name, 'avg_irof.png')
+    path = os.path.join(RESULTS_ROOT, location, class_name, 'avg_irof.png')
     plt.savefig(path)
     plt.close()
 

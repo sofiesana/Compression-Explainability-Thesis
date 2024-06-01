@@ -35,6 +35,10 @@ def run_irof_seg(model, test_loader,):
     class_scores = {}
     class_histories = {}
 
+    sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
+    sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
+
+
     for i, gt_batch in enumerate(test_loader):
         
         model.eval()
@@ -87,7 +91,7 @@ def run_irof_seg(model, test_loader,):
 
             if valid_indices:
 
-                path = os.path.join(RESULTS_ROOT, class_name)
+                path = os.path.join(RESULTS_ROOT, location, class_name)
                 if not os.path.isdir(path):
                     os.mkdir(path)
                 print("Directory '% s' created" % path)
@@ -100,13 +104,12 @@ def run_irof_seg(model, test_loader,):
                 a_batch = attributions[valid_indices]
                 reduced_preds = preds[valid_indices]
 
-                get_resized_binary_mask(reduced_image_names, reduced_preds, class_name, class_category)
+                get_resized_binary_mask(reduced_image_names, reduced_preds, class_name, class_category, location)
 
                 class_mask_float = get_binary_mask(reduced_preds, class_category)
                 attributions = get_attributions(model, class_category, class_mask_float, x_batch)
 
-                get_gradcam_image(reduced_image_names, a_batch, x_batch, class_name)
-
+                get_gradcam_image(reduced_image_names, a_batch, x_batch, location, class_name)
                 scores, histories = irof(model=model,
                     x_batch=x_batch,
                     y_batch=y_batch,
@@ -121,6 +124,12 @@ def run_irof_seg(model, test_loader,):
                     class_scores[class_category].extend(scores)
                     class_histories[class_category].extend(histories)
     
+
+    for category in class_scores.keys():
+        class_name = sem_idx_to_class[category]
+        plot_all_irof_curves(class_histories[category], location, class_name)
+        plot_avg_irof_curve(class_histories[category], location, class_name)
+
     return class_scores, class_histories
 
 def run_irof_sn(model, test_loader):
@@ -156,9 +165,9 @@ def run_irof_sn(model, test_loader):
                                 task = task
                                 )
 
-        attributions = get_attributions(model, image)
-        get_gradcam_image(img_names, attributions, image)
-        get_sn_image(img_names, preds)
+        attributions = get_attributions(model, image, location)
+        get_gradcam_image(img_names, attributions, image, location)
+        get_sn_image(img_names, preds, location)
 
         scores, histories = irof(model=model,
                 x_batch=gt_batch["img"],
@@ -169,6 +178,11 @@ def run_irof_sn(model, test_loader):
         if scores is not None:
             all_scores.extend(scores)
             all_histories.extend(histories)
+        
+    plot_all_irof_curves(all_histories, location)
+    plot_avg_irof_curve(all_histories, location)
+
+    return all_scores, all_histories
 
 
 if __name__ == "__main__":
@@ -195,23 +209,21 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = load_model(device, pruned, task)
-
     all_preds = []
     preds = None
     img_name = None
     image = None
     dataset = 'nyuv2'
-    class_scores = {}
-    class_histories = {}
-
-    sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
-    sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
+    all_scores = {}
+    all_histories = {}
 
     for method in PRUNING_METHODS:
-            method_results = {}
+            method_histories = {}
+            method_scores = {}
             
             for model_num in range(1, NUM_MODELS+1):
+                location = method + str(model_num)
+
                 if method == "baseline":
                     net = SceneNet(TASKS_NUM_CLASS).to(device)
                     print("baseline model " + str(model_num))
@@ -225,18 +237,20 @@ if __name__ == "__main__":
                     net.eval()
 
                     if task == 'seg':
-                        scores, histories = run_irof_seg(model, test_loader)
+                        scores, histories = run_irof_seg(net, test_loader, location)
                     elif task == 'sn':
-                        scores, histories = run_irof_sn()
+                        scores, histories = run_irof_sn(net, test_loader, location)
+                        
                     else:
                         print("task not recognized")
                         break
                     
-                    # store histories and scores:
-                    # method_results[model_num] = 
+                    method_histories[model_num] = histories
+                    method_scores[model_num] = scores
 
                 else:
                     for ratio in PRUNING_RATIOS:
+                        location = os.path.join(method + str(model_num), ratio)
                         
                         print(f"{method} model {model_num} ratio {ratio}")
                         test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
@@ -256,26 +270,29 @@ if __name__ == "__main__":
                         path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
                         net.load_state_dict(torch.load(path_to_model))
                         net.eval()
-                        res = evaluator.get_final_metrics(net, test_loader)
-                        print(res)
 
-                        if model_num not in method_results:
-                            method_results[model_num] = {}
+                        if task == 'seg':
+                            scores, histories = run_irof_seg(net, test_loader, location)
+                        elif task == 'sn':
+                            scores, histories = run_irof_sn(net, test_loader, location)
+                        else:
+                            print("task not recognized")
+                            break
+                        
+                        if model_num not in method_scores:
+                            method_scores[model_num] = {}
+                            method_histories[model_num] = {}
 
-                        method_results[model_num][ratio] = res
-
-
+                        method_scores[model_num][ratio] = scores
+                        method_histories[model_num][ratio] = histories
+            
+            all_scores[method] = method_scores
+            all_histories[method] = method_histories
     
-    mean_aoc = {}
-
-    for category in class_scores.keys():
-        class_name = sem_idx_to_class[category]
-        mean_aoc[category] = np.mean(np.array(class_scores[category]))
-        plot_all_irof_curves(class_histories[category], class_name)
-        plot_avg_irof_curve(class_histories[category], class_name)
+    print(all_scores)
 
     with open(os.path.join(RESULTS_ROOT, 'histories.pkl'), 'wb') as file:
-        pickle.dump(class_histories, file)
+        pickle.dump(all_histories, file)
     
     with open(os.path.join(RESULTS_ROOT,'scores.pkl'), 'wb') as file:
-        pickle.dump(class_scores, file)
+        pickle.dump(all_scores, file)
