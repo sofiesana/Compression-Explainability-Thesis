@@ -30,42 +30,10 @@ PRUNING_METHODS = ["baseline", "pt", "static", "dynamic"]
 NUM_MODELS = 3
 PRUNING_RATIOS = [50, 70, 80, 90]
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='IROF Evaluation')
-    parser.add_argument(
-        '--head', type=str, help='mtl model head: all, ', default="all")
-    parser.add_argument(
-        '--pruned', type=str, help='is the model pruned?: y, n', default="n")
-    parser.add_argument(
-        '--task', type=str, help='seg, sn', default="None")
-    parser.add_argument(
-        '--irof', type=str, help='mean, uniform', default="mean")
-    args = parser.parse_args()
+def run_irof_seg(model, test_loader,):
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    test_dataset = NYU_v2(DATA_ROOT, 'test')
-    test_loader = DataLoader(test_dataset, batch_size=10,
-                             num_workers=8, shuffle=True, pin_memory=True)
-
-    pruned = args.pruned
-    head = args.head
-    task = args.task
-    irof_version = args.irof
-    if task == "None":
-        task = None
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = load_model(device, pruned, task)
-
-    all_preds = []
-    preds = None
-    img_name = None
-    image = None
     class_scores = {}
     class_histories = {}
-
-    sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
-    sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
 
     for i, gt_batch in enumerate(test_loader):
         
@@ -96,7 +64,8 @@ if __name__ == "__main__":
                                     return_aggregate=False,
                                     class_category=class_category,
                                     class_name=class_name,
-                                    num_classes=40
+                                    num_classes=40, 
+                                    task = task
                                     )
 
             class_mask_float = get_binary_mask(preds, class_category)
@@ -151,6 +120,151 @@ if __name__ == "__main__":
 
                     class_scores[class_category].extend(scores)
                     class_histories[class_category].extend(histories)
+    
+    return class_scores, class_histories
+
+def run_irof_sn(model, test_loader):
+    all_scores = []
+    all_histories = []
+
+    for i, gt_batch in enumerate(test_loader):
+        
+        model.eval()
+        gt_batch["img"] = Variable(gt_batch["img"]).to(device)
+        if "seg" in gt_batch:
+            gt_batch["seg"] = Variable(gt_batch["seg"]).to(device)
+        if "depth" in gt_batch:
+            gt_batch["depth"] = Variable(gt_batch["depth"]).to(device)
+        if "normal" in gt_batch:
+            gt_batch["normal"] = Variable(gt_batch["normal"]).to(device)
+
+        preds = model(gt_batch["img"])
+        
+        img_names = gt_batch["name"]
+        image = gt_batch["img"]
+
+        for i in range(len(image)):
+            img_names[i] = str(img_names[i]).replace('.png', '')
+        
+        irof = quantus.IROF(segmentation_method="slic",
+                                perturb_baseline=irof_version,
+                                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                                return_aggregate=False,
+                                class_category=None,
+                                class_name=None,
+                                num_classes=40,
+                                task = task
+                                )
+
+        attributions = get_attributions(model, image)
+        get_gradcam_image(img_names, attributions, image)
+        get_sn_image(img_names, preds)
+
+        scores, histories = irof(model=model,
+                x_batch=gt_batch["img"],
+                y_batch=preds,
+                a_batch=attributions,
+                device=device)
+        
+        if scores is not None:
+            all_scores.extend(scores)
+            all_histories.extend(histories)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='IROF Evaluation')
+    parser.add_argument(
+        '--head', type=str, help='mtl model head: all, ', default="all")
+    parser.add_argument(
+        '--pruned', type=str, help='is the model pruned?: y, n', default="n")
+    parser.add_argument(
+        '--task', type=str, help='seg, sn', default="None")
+    parser.add_argument(
+        '--irof', type=str, help='mean, uniform', default="mean")
+    args = parser.parse_args()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    test_dataset = NYU_v2(DATA_ROOT, 'test')
+
+    pruned = args.pruned
+    head = args.head
+    task = args.task
+    irof_version = args.irof
+    if task == "None":
+        task = None
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = load_model(device, pruned, task)
+
+    all_preds = []
+    preds = None
+    img_name = None
+    image = None
+    dataset = 'nyuv2'
+    class_scores = {}
+    class_histories = {}
+
+    sem_idx_to_class = {idx: cls for (idx, cls) in enumerate(CLASS_NAMES)}
+    sem_class_to_idx = {cls: idx for (idx, cls) in enumerate(CLASS_NAMES)}
+
+    for method in PRUNING_METHODS:
+            method_results = {}
+            
+            for model_num in range(1, NUM_MODELS+1):
+                if method == "baseline":
+                    net = SceneNet(TASKS_NUM_CLASS).to(device)
+                    print("baseline model " + str(model_num))
+                    test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
+                    evaluator = SceneNetEval(
+                            device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
+                                        
+                    network_name = f"{dataset}_{method}"
+                    path_to_model = os.path.join(os.environ.get('TMPDIR'), method, method + str(model_num), "tmp/results", f"best_{network_name}.pth")
+                    net.load_state_dict(torch.load(path_to_model))
+                    net.eval()
+
+                    if task == 'seg':
+                        scores, histories = run_irof_seg(model, test_loader)
+                    elif task == 'sn':
+                        scores, histories = run_irof_sn()
+                    else:
+                        print("task not recognized")
+                        break
+                    
+                    # store histories and scores:
+                    # method_results[model_num] = 
+
+                else:
+                    for ratio in PRUNING_RATIOS:
+                        
+                        print(f"{method} model {model_num} ratio {ratio}")
+                        test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
+                        evaluator = SceneNetEval(
+                                device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
+                        
+                        net = SceneNet(TASKS_NUM_CLASS).to(device)
+
+                        for module in net.modules():
+                            # Check if it's basic block
+                            if isinstance(module, nn.modules.conv.Conv2d) or isinstance(module, nn.modules.Linear):
+                                module = prune.identity(module, 'weight')
+
+                        # need to actually retrieve the model
+                        network_name = f"{dataset}_disparse_{method}_{ratio}"
+
+                        path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
+                        net.load_state_dict(torch.load(path_to_model))
+                        net.eval()
+                        res = evaluator.get_final_metrics(net, test_loader)
+                        print(res)
+
+                        if model_num not in method_results:
+                            method_results[model_num] = {}
+
+                        method_results[model_num][ratio] = res
+
+
     
     mean_aoc = {}
 
