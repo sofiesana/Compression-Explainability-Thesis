@@ -182,7 +182,7 @@ def get_sn_image(img_names, preds):
 
 def get_sn_attributions(model, image):
     target_layers = [model.backbone]
-    targets = [EntireOutputTarget()]
+    targets = [EntireOutputTarget() for _ in image]
     with GradCAM(model=model, target_layers=target_layers) as cam:
         grayscale_cam = cam(input_tensor=image,
                             targets=targets)
