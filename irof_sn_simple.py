@@ -171,10 +171,10 @@ def get_gradcam_image_sn(img_names, attributions, image):
 
 def get_sn_image(img_names, preds):
     ### requires normalized predictions
-    for i, pred in enumerate(preds):
+    resized_preds = F.interpolate(pred, (480, 640))
+    for i, pred in enumerate(resized_preds):
         name = img_names[i]
-        sn = F.interpolate(pred, (480, 640))
-        sn_output = np.uint8(255*sn.detach().cpu().numpy())
+        sn_output = np.uint8(255*pred.detach().cpu().numpy())
         image_array = np.transpose(sn_output[2], (1, 2, 0))
         image = Image.fromarray(image_array)
         path = os.path.join(RESULTS_ROOT, name+'_pred_sn.jpg')
