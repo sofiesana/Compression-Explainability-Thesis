@@ -102,6 +102,12 @@ tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic3/trained_results.tar.gz 
 
 ########### GET CODE
 
+# make a directory in the TMPDIR for quantus
+mkdir $TMPDIR/quantus
+
+# Copy code to $TMPDIR
+cp -r /scratch/s4716671/github/Quantus-Thesis-Version $TMPDIR/quantus
+
 # make a directory in the TMPDIR for the code
 mkdir $TMPDIR/code
 
