@@ -157,7 +157,7 @@ def load_model(device, pruned, task):
 
     return model
 
-def get_gradcam_image_sn(img_names, attributions):
+def get_gradcam_image_sn(img_names, attributions, image):
     for i in range(len(image)):
         name = img_names[i]
         og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
@@ -285,7 +285,7 @@ if __name__ == "__main__":
                                 )
 
         attributions = get_sn_attributions(model, image)
-        get_gradcam_image_sn(img_names, attributions)
+        get_gradcam_image_sn(img_names, attributions, image)
 
         scores, histories = irof(model=model,
                 x_batch=gt_batch["img"],
