@@ -267,6 +267,7 @@ if __name__ == "__main__":
             gt_batch["normal"] = Variable(gt_batch["normal"]).to(device)
 
         preds = model(gt_batch["img"])
+        print(preds)
         
         img_names = gt_batch["name"]
         image = gt_batch["img"]
@@ -297,6 +298,7 @@ if __name__ == "__main__":
         if scores is not None:
             all_scores.extend(scores)
             all_histories.extend(histories)
+        break
     
     print("mean score:", np.mean(np.array(scores)))
 
