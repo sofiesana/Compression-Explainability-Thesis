@@ -175,7 +175,7 @@ def get_sn_image(img_names, preds):
     for i, pred in enumerate(resized_preds):
         name = img_names[i]
         sn_output = np.uint8(255*pred.detach().cpu().numpy())
-        image_array = np.transpose(sn_output, (1, 2, 0))
+        image_array = np.transpose(sn_output, (0,1,2))
         image = Image.fromarray(image_array)
         path = os.path.join(RESULTS_ROOT, name+'_pred_sn.jpg')
         image.save(path)
