@@ -171,7 +171,8 @@ def get_gradcam_image_sn(img_names, attributions, image):
         cam_image_final.save(path)
 
 def get_sn_image(img_names, preds):
-    resized_preds = F.interpolate(preds, (480, 640))
+    normalized_preds = F.normalize(preds, dim=1)
+    resized_preds = F.interpolate(normalized_preds, (480, 640))
     for i, pred in enumerate(resized_preds):
         name = img_names[i]
         sn_output = np.uint8(255*pred.detach().cpu().numpy())
@@ -268,6 +269,7 @@ if __name__ == "__main__":
 
         preds = model(gt_batch["img"])
         print(preds)
+        print(F.normalize(preds, dim=1))
         
         img_names = gt_batch["name"]
         image = gt_batch["img"]
