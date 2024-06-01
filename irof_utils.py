@@ -124,7 +124,7 @@ class EntireOutputTarget:
     def __call__(self, model_output):
         return model_output.sum()
 
-def load_model(device, pruned, task):
+def load_model(device, pruned, task, model_path):
     model = SceneNet(TASKS_NUM_CLASS, task=task).to(device)
 
     if pruned == 'y':
@@ -134,7 +134,7 @@ def load_model(device, pruned, task):
                 module = prune.identity(module, 'weight')
 
     # Load the state dictionary into your model
-    model.load_state_dict(torch.load(MODEL_ROOT))
+    model.load_state_dict(torch.load(model_path))
     model.cuda()
 
     return model

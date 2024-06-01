@@ -225,7 +225,7 @@ if __name__ == "__main__":
                 location = method + str(model_num)
 
                 if method == "baseline":
-                    net = SceneNet(TASKS_NUM_CLASS).to(device)
+                    
                     print("baseline model " + str(model_num))
                     test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
                     evaluator = SceneNetEval(
@@ -233,7 +233,10 @@ if __name__ == "__main__":
                                         
                     network_name = f"{dataset}_{method}"
                     path_to_model = os.path.join(os.environ.get('TMPDIR'), method, method + str(model_num), "tmp/results", f"best_{network_name}.pth")
-                    net.load_state_dict(torch.load(path_to_model))
+
+                    net = load_model(device, 'n', task, path_to_model)
+                    # net = SceneNet(TASKS_NUM_CLASS).to(device)
+                    # net.load_state_dict(torch.load(path_to_model))
                     net.eval()
 
                     if task == 'seg':
@@ -257,7 +260,7 @@ if __name__ == "__main__":
                         evaluator = SceneNetEval(
                                 device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                         
-                        net = SceneNet(TASKS_NUM_CLASS).to(device)
+                        # net = SceneNet(TASKS_NUM_CLASS).to(device)
 
                         for module in net.modules():
                             # Check if it's basic block
@@ -268,7 +271,7 @@ if __name__ == "__main__":
                         network_name = f"{dataset}_disparse_{method}_{ratio}"
 
                         path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
-                        net.load_state_dict(torch.load(path_to_model))
+                        net = load_model(device, 'y', task, path_to_model)
                         net.eval()
 
                         if task == 'seg':
