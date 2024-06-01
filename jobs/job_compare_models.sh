@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=attempt1
+#SBATCH --job-name=compare_models
 #SBATCH --time=00:25:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

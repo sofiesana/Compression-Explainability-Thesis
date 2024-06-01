@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=attempt1
+#SBATCH --job-name=irof_seg
 #SBATCH --time=01:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
