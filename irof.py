@@ -153,7 +153,7 @@ def load_model(device, pruned, task):
 
     return model
 
-def get_resized_binary_mask(img_names, preds, seg_class, class_category):
+def get_resized_binary_mask(img_names, preds, class_name, class_category):
     resized_preds = F.interpolate(preds, (480, 640))
     normalized_masks = torch.nn.functional.softmax(resized_preds, dim=1)
     class_mask = normalized_masks.argmax(axis=1).detach().cpu().numpy()
@@ -167,7 +167,7 @@ def get_resized_binary_mask(img_names, preds, seg_class, class_category):
         path = os.path.join(RESULTS_ROOT, class_name, name+'_predicted_mask.jpg')
         masked_pixels.save(path)
 
-def get_gradcam_image(img_names, attributions, image, seg_class):
+def get_gradcam_image(img_names, attributions, image, class_name):
     for i in range(len(image)):
         name = img_names[i]
         og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
