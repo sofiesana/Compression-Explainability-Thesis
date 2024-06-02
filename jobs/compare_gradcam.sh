@@ -50,5 +50,5 @@ mkdir $TMPDIR/results
 python3 irof_sn_layer_comparison.py --head all --pruned n --task sn --irof mean
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/gradcam
+mkdir -p /scratch/$USER/gradcam/sn/job_${SLURM_JOBID}
 tar czvf /scratch/$USER/gradcam/sn/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results

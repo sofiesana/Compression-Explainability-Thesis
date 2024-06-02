@@ -163,7 +163,7 @@ def get_gradcam_image_sn(img_names, attributions, image, layer_name):
         og_img = (image[i].cpu().squeeze().permute(1, 2, 0).numpy())
         og_img = (og_img - og_img.min()) / (og_img.max() - og_img.min())
         
-        cam_image = show_cam_on_image(og_img, attributions[layer_name][i], use_rgb=True)
+        cam_image = show_cam_on_image(og_img, attributions[i], use_rgb=True)
 
         cam_image_final = Image.fromarray(cam_image)
         path = os.path.join(RESULTS_ROOT, f"{name}_grad_cam_{layer_name}.jpg")
