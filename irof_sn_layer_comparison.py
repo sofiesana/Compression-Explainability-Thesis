@@ -258,6 +258,7 @@ if __name__ == "__main__":
     layer_names = ["backbone", "blocks[3][2].relu", "blocks[3][2].conv2"]
 
     for layer, layer_name in zip(layers_to_try, layer_names):
+        os.mkdir(os.path.join(RESULTS_ROOT, layer_name))
         for i, gt_batch in enumerate(test_loader):
             
             model.eval()
