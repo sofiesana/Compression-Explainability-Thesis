@@ -258,6 +258,8 @@ if __name__ == "__main__":
     layer_names = ["backbone", "blocks[3][2].relu", "blocks[3][2].conv2"]
 
     for layer, layer_name in zip(layers_to_try, layer_names):
+        all_scores = []
+        all_histories = []
         os.mkdir(os.path.join(RESULTS_ROOT, layer_name))
         test_loader = DataLoader(test_dataset, batch_size=10,
                              num_workers=8, shuffle=False, pin_memory=True)
