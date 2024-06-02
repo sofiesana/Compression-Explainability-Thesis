@@ -289,9 +289,9 @@ if __name__ == "__main__":
                                     task = task
                                     )
 
-            attributions = get_sn_attributions(model, image)
-            get_gradcam_image_sn(img_names, attributions, image, layer)
-            get_sn_image(img_names, preds, layer_name)
+            attributions = get_sn_attributions(model, image, layer)
+            get_gradcam_image_sn(img_names, attributions, image, layer_name)
+            get_sn_image(img_names, preds)
 
             scores, histories = irof(model=model,
                     x_batch=gt_batch["img"],
