@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=compare_models
-#SBATCH --time=00:15:00
+#SBATCH --time=01:20:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
