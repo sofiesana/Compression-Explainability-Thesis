@@ -93,7 +93,7 @@ def run_irof_seg(model, test_loader, location):
 
                 path = os.path.join(RESULTS_ROOT, location, class_name)
                 if not os.path.isdir(path):
-                    os.mkdir(path)
+                    os.makedirs(path)
                 print("Directory '% s' created" % path)
 
                 y_batch = preds.argmax(axis=1)
