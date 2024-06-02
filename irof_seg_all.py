@@ -73,7 +73,7 @@ def run_irof_seg(model, test_loader, location):
                                     )
 
             class_mask_float = get_binary_mask(preds, class_category)
-            attributions = get_attributions(model, class_category, class_mask_float, image)
+            attributions = get_attributions(model, image, class_category, class_mask_float)
             
             valid_indices = []
 
@@ -107,7 +107,7 @@ def run_irof_seg(model, test_loader, location):
                 get_resized_binary_mask(reduced_image_names, reduced_preds, class_name, class_category, location)
 
                 class_mask_float = get_binary_mask(reduced_preds, class_category)
-                attributions = get_attributions(model, class_category, class_mask_float, x_batch)
+                attributions = get_attributions(model, x_batch, class_category, class_mask_float)
 
                 get_gradcam_image(reduced_image_names, a_batch, x_batch, location, class_name)
                 scores, histories = irof(model=model,
@@ -165,7 +165,7 @@ def run_irof_sn(model, test_loader, location):
                                 task = task
                                 )
 
-        attributions = get_attributions(model, image, location)
+        attributions = get_attributions(model, image)
         get_gradcam_image(img_names, attributions, image, location)
         get_sn_image(img_names, preds, location)
 
