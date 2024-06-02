@@ -187,7 +187,7 @@ def get_sn_attributions(model, image, layer):
         grayscale_cam = cam(input_tensor=image, targets=targets)
     return grayscale_cam
 
-def plot_all_irof_curves_sn(histories):
+def plot_all_irof_curves_sn(histories, layer_name):
     for history in histories:
         history = np.array(history)
         plt.plot(range(len(history)), history, marker='o')
