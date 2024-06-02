@@ -260,7 +260,7 @@ if __name__ == "__main__":
     for layer, layer_name in zip(layers_to_try, layer_names):
         os.mkdir(os.path.join(RESULTS_ROOT, layer_name))
         test_loader = DataLoader(test_dataset, batch_size=10,
-                             num_workers=8, shuffle=True, pin_memory=True)
+                             num_workers=8, shuffle=False, pin_memory=True)
         for i, gt_batch in enumerate(test_loader):
             
             model.eval()
