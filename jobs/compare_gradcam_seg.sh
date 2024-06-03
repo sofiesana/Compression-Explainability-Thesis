@@ -47,7 +47,7 @@ cd $TMPDIR/code/Compression-Explainability-Thesis
 mkdir $TMPDIR/results
 
 # Run training
-python3 irof_sn_layer_comparison.py --head all --pruned n --task seg --irof mean
+python3 irof_seg_layer_comparison.py --head all --pruned n --task seg --irof mean
 
 # Save models by compressing and copying from TMPDIR
 mkdir -p /scratch/$USER/gradcam/seg/job_${SLURM_JOBID}
