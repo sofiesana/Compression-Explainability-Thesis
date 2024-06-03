@@ -26,7 +26,7 @@ sys.path.insert(0, quantus_dir)
 
 import quantus
 
-PRUNING_METHODS = ["baseline", "pt", "static", "dynamic"]
+# PRUNING_METHODS = ["baseline", "pt", "static", "dynamic"]
 NUM_MODELS = 3
 PRUNING_RATIOS = [50, 70, 80, 90]
 
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--head', type=str, help='mtl model head: all, ', default="all")
     parser.add_argument(
-        '--pruned', type=str, help='is the model pruned?: y, n', default="n")
+        '--method', type=str, help='pruning method to evaluate: baseline, pt, dynamic, static', default="baseline")
     parser.add_argument(
         '--task', type=str, help='seg, sn', default="None")
     parser.add_argument(
@@ -200,12 +200,14 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test_dataset = NYU_v2(DATA_ROOT, 'test')
 
-    pruned = args.pruned
+    method = args.pruned
     head = args.head
     task = args.task
     irof_version = args.irof
     if task == "None":
         task = None
+    
+    PRUNING_METHODS = [method]
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -218,79 +220,85 @@ if __name__ == "__main__":
     all_histories = {}
 
     for method in PRUNING_METHODS:
-            method_histories = {}
-            method_scores = {}
-            
-            for model_num in range(1, NUM_MODELS+1):
-                location = method + str(model_num)
+        method_histories = {}
+        method_scores = {}
+        
+        for model_num in range(1, NUM_MODELS+1):
+            location = method + str(model_num)
 
-                if method == "baseline":
+            if method == "baseline":
+                
+                print("baseline model " + str(model_num))
+                test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
+                evaluator = SceneNetEval(
+                        device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
+                                    
+                network_name = f"{dataset}_{method}"
+                path_to_model = os.path.join(os.environ.get('TMPDIR'), method, method + str(model_num), "tmp/results", f"best_{network_name}.pth")
+
+                net = load_model(device, 'n', task, path_to_model)
+                # net = SceneNet(TASKS_NUM_CLASS).to(device)
+                # net.load_state_dict(torch.load(path_to_model))
+                net.eval()
+
+                if task == 'seg':
+                    scores, histories = run_irof_seg(net, test_loader, location)
+                elif task == 'sn':
+                    scores, histories = run_irof_sn(net, test_loader, location)
                     
-                    print("baseline model " + str(model_num))
+                else:
+                    print("task not recognized")
+                    break
+                
+                method_histories[model_num] = histories
+                method_scores[model_num] = scores
+
+            else:
+                for ratio in PRUNING_RATIOS:
+                    location = os.path.join(method + str(model_num), str(ratio))
+                    
+                    print(f"{method} model {model_num} ratio {ratio}")
                     test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
                     evaluator = SceneNetEval(
                             device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
-                                        
-                    network_name = f"{dataset}_{method}"
-                    path_to_model = os.path.join(os.environ.get('TMPDIR'), method, method + str(model_num), "tmp/results", f"best_{network_name}.pth")
-
-                    net = load_model(device, 'n', task, path_to_model)
+                    
                     # net = SceneNet(TASKS_NUM_CLASS).to(device)
-                    # net.load_state_dict(torch.load(path_to_model))
+
+                    for module in net.modules():
+                        # Check if it's basic block
+                        if isinstance(module, nn.modules.conv.Conv2d) or isinstance(module, nn.modules.Linear):
+                            module = prune.identity(module, 'weight')
+
+                    # need to actually retrieve the model
+                    network_name = f"{dataset}_disparse_{method}_{ratio}"
+
+                    path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
+                    net = load_model(device, 'y', task, path_to_model)
                     net.eval()
 
                     if task == 'seg':
                         scores, histories = run_irof_seg(net, test_loader, location)
                     elif task == 'sn':
                         scores, histories = run_irof_sn(net, test_loader, location)
-                        
                     else:
                         print("task not recognized")
                         break
                     
-                    method_histories[model_num] = histories
-                    method_scores[model_num] = scores
+                    if model_num not in method_scores:
+                        method_scores[model_num] = {}
+                        method_histories[model_num] = {}
 
-                else:
-                    for ratio in PRUNING_RATIOS:
-                        location = os.path.join(method + str(model_num), ratio)
-                        
-                        print(f"{method} model {model_num} ratio {ratio}")
-                        test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
-                        evaluator = SceneNetEval(
-                                device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
-                        
-                        # net = SceneNet(TASKS_NUM_CLASS).to(device)
+                    method_scores[model_num][ratio] = scores
+                    method_histories[model_num][ratio] = histories
+        
+        # with open(os.path.join(RESULTS_ROOT, method + '_histories.pkl'), 'wb') as file:
+        #     pickle.dump(method_histories, file)
 
-                        for module in net.modules():
-                            # Check if it's basic block
-                            if isinstance(module, nn.modules.conv.Conv2d) or isinstance(module, nn.modules.Linear):
-                                module = prune.identity(module, 'weight')
+        # with open(os.path.join(RESULTS_ROOT, method + 'scores.pkl'), 'wb') as file:
+        #     pickle.dump(method_scores, file)
 
-                        # need to actually retrieve the model
-                        network_name = f"{dataset}_disparse_{method}_{ratio}"
-
-                        path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
-                        net = load_model(device, 'y', task, path_to_model)
-                        net.eval()
-
-                        if task == 'seg':
-                            scores, histories = run_irof_seg(net, test_loader, location)
-                        elif task == 'sn':
-                            scores, histories = run_irof_sn(net, test_loader, location)
-                        else:
-                            print("task not recognized")
-                            break
-                        
-                        if model_num not in method_scores:
-                            method_scores[model_num] = {}
-                            method_histories[model_num] = {}
-
-                        method_scores[model_num][ratio] = scores
-                        method_histories[model_num][ratio] = histories
-            
-            all_scores[method] = method_scores
-            all_histories[method] = method_histories
+        all_scores[method] = method_scores
+        all_histories[method] = method_histories
     
     print(all_scores)
 
