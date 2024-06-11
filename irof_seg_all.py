@@ -200,7 +200,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     test_dataset = NYU_v2(DATA_ROOT, 'test')
 
-    method = args.pruned
+    method = args.method
     head = args.head
     task = args.task
     irof_version = args.irof
