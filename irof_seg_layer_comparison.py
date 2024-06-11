@@ -108,7 +108,7 @@ class SceneNet(nn.Module):
         outputs = []
         feats = self.backbone(img)
         task_id = 0
-        print("task:", self.task)
+        # print("task:", self.task)
 
         # if running explainability experiments
         if self.task is not None:
@@ -116,7 +116,7 @@ class SceneNet(nn.Module):
                 task_id = 0
             if self.task == 'sn':
                 task_id = 1
-        print("task:", task_id)
+        # print("task:", task_id)
         for t_id in range(self.num_tasks):
             output = getattr(self, 'task%d_fc1_c0' % (t_id + 1))(feats) + \
                 getattr(self, 'task%d_fc1_c1' % (t_id + 1))(feats) + \

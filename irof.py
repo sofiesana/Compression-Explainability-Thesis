@@ -180,7 +180,7 @@ def get_gradcam_image(img_names, attributions, image, class_name):
         cam_image_final.save(path)
 
 def get_attributions(model, class_category, class_mask_float, image):
-    target_layers = [model.backbone]
+    target_layers = [model.backbone.blocks[3][2].conv2]
     targets = [SemanticSegmentationTarget(class_category, class_mask) for class_mask in class_mask_float]
     with GradCAM(model=model, target_layers=target_layers) as cam:
         grayscale_cam = cam(input_tensor=image,
