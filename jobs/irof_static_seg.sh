@@ -28,22 +28,21 @@ mkdir -p $TMPDIR/pruned/static/static1
 mkdir -p $TMPDIR/pruned/static/static2
 mkdir -p $TMPDIR/pruned/static/static3
 
-# extract baselinme model from scratch to TMPDIR/static
+# extract baselinme model from scratch to TMPDIR/pt
+tar xzf /scratch/$USER/pruned_models/static/50/static1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
+tar xzf /scratch/$USER/pruned_models/static/70/static1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
+tar xzf /scratch/$USER/pruned_models/static/80/static1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
+tar xzf /scratch/$USER/pruned_models/static/90/static1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
 
-tar xzf /scratch/$USER/pruned_models/static/50/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
-tar xzf /scratch/$USER/pruned_models/static/70/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
-tar xzf /scratch/$USER/pruned_models/static/80/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
-tar xzf /scratch/$USER/pruned_models/static/90/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/static/static1
+tar xzf /scratch/$USER/pruned_models/static/50/static2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
+tar xzf /scratch/$USER/pruned_models/static/70/static2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
+tar xzf /scratch/$USER/pruned_models/static/80/static2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
+tar xzf /scratch/$USER/pruned_models/static/90/static2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
 
-tar xzf /scratch/$USER/pruned_models/static/50/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
-tar xzf /scratch/$USER/pruned_models/static/70/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
-tar xzf /scratch/$USER/pruned_models/static/80/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
-tar xzf /scratch/$USER/pruned_models/static/90/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/static/static2
-
-tar xzf /scratch/$USER/pruned_models/static/50/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
-tar xzf /scratch/$USER/pruned_models/static/70/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
-tar xzf /scratch/$USER/pruned_models/static/80/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
-tar xzf /scratch/$USER/pruned_models/static/90/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
+tar xzf /scratch/$USER/pruned_models/static/50/static3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
+tar xzf /scratch/$USER/pruned_models/static/70/static3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
+tar xzf /scratch/$USER/pruned_models/static/80/static3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
+tar xzf /scratch/$USER/pruned_models/static/90/static3/trained_results.tar.gz -C $TMPDIR/pruned/static/static3
 
 ########### GET CODE
 
