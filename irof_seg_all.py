@@ -264,10 +264,10 @@ if __name__ == "__main__":
                     
                     # net = SceneNet(TASKS_NUM_CLASS).to(device)
 
-                    for module in net.modules():
-                        # Check if it's basic block
-                        if isinstance(module, nn.modules.conv.Conv2d) or isinstance(module, nn.modules.Linear):
-                            module = prune.identity(module, 'weight')
+                    # for module in net.modules():
+                    #     # Check if it's basic block
+                    #     if isinstance(module, nn.modules.conv.Conv2d) or isinstance(module, nn.modules.Linear):
+                    #         module = prune.identity(module, 'weight')
 
                     # need to actually retrieve the model
                     network_name = f"{dataset}_disparse_{method}_{ratio}"
