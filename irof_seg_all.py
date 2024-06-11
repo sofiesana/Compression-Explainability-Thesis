@@ -80,13 +80,15 @@ def run_irof_seg(model, test_loader, location):
             # i is img index in batch
             for i, img_seg in enumerate(torch.argmax(preds, axis=1)):
                 if class_category not in img_seg:
-                    print(class_name, " not in image ", str(img_names[i]))
+                    # print(class_name, " not in image ", str(img_names[i]))
+                    pass
                 if np.all((attributions[i] == 0)):
-                    print("attributions all zero for image ", str(img_names[i]))
+                    # print("attributions all zero for image ", str(img_names[i]))
+                    pass
                 if class_category in img_seg and not np.all((attributions[i] == 0)):
                     valid_indices.append(i)
 
-            print("valid:", valid_indices)
+            # print("valid:", valid_indices)
 
 
             if valid_indices:
@@ -94,7 +96,7 @@ def run_irof_seg(model, test_loader, location):
                 path = os.path.join(RESULTS_ROOT, location, class_name)
                 if not os.path.isdir(path):
                     os.makedirs(path)
-                print("Directory '% s' created" % path)
+                # print("Directory '% s' created" % path)
 
                 y_batch = preds.argmax(axis=1)
                 
@@ -300,7 +302,7 @@ if __name__ == "__main__":
         all_scores[method] = method_scores
         all_histories[method] = method_histories
     
-    print(all_scores)
+    # print(all_scores)
 
     with open(os.path.join(RESULTS_ROOT, 'histories.pkl'), 'wb') as file:
         pickle.dump(all_histories, file)
