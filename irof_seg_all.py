@@ -173,11 +173,13 @@ def run_irof_sn(model, test_loader, location):
         valid_indices = []
 
         for i, att in enumerate(attributions):
+            print(att)
             if not np.all((att == 0)):
+                print("valid")
                 valid_indices.append(i)
 
         if valid_indices:
-
+            print(valid_indices)
             reduced_image_names = np.array(img_names)[valid_indices]
             y_batch = preds[valid_indices]
             x_batch = gt_batch["img"][valid_indices]
