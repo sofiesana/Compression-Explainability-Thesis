@@ -154,12 +154,12 @@ def get_resized_binary_mask(img_names, preds, class_name, class_category, locati
         masked_pixels.save(path)
 
 def get_sn_image(img_names, preds, location):
-    ### requires normalized predictions
-    for i, pred in enumerate(preds):
+    normalized_preds = F.normalize(preds, dim=1)
+    resized_preds = F.interpolate(normalized_preds, (480, 640))
+    for i, pred in enumerate(resized_preds):
         name = img_names[i]
-        sn = F.interpolate(pred, (480, 640))
-        sn_output = np.uint8(255*sn.detach().cpu().numpy())
-        image_array = np.transpose(sn_output[2], (1, 2, 0))
+        sn_output = np.uint8(255*pred.detach().cpu().numpy())
+        image_array = np.transpose(sn_output, (1,2,0))
         image = Image.fromarray(image_array)
         path = os.path.join(RESULTS_ROOT, location, name+'_pred_sn.jpg')
         image.save(path)
