@@ -180,7 +180,7 @@ def get_gradcam_image(img_names, attributions, image, location, class_name = Non
         cam_image_final.save(path)
 
 def get_attributions(model, image, class_category = None, class_mask_float = None):
-    target_layers = [model.backbone]
+    target_layers = [model.backbone.blocks[3][2].conv2]
     if class_category is not None:
         targets = [SemanticSegmentationTarget(class_category, class_mask) for class_mask in class_mask_float]
     else:
