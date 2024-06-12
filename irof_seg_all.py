@@ -168,18 +168,32 @@ def run_irof_sn(model, test_loader, location):
                                 )
 
         attributions = get_attributions(model, image)
-        get_gradcam_image(img_names, attributions, image, location)
         get_sn_image(img_names, preds, location)
 
-        scores, histories = irof(model=model,
-                x_batch=gt_batch["img"],
-                y_batch=preds,
-                a_batch=attributions,
-                device=device)
-        
-        if scores is not None:
-            all_scores.extend(scores)
-            all_histories.extend(histories)
+        valid_indices = []
+
+        for i, att in enumerate(attributions):
+            if not np.all((att == 0)):
+                valid_indices.append(i)
+
+        if valid_indices:
+
+            reduced_image_names = np.array(img_names)[valid_indices]
+            y_batch = preds[valid_indices]
+            x_batch = gt_batch["img"][valid_indices]
+            a_batch = attributions[valid_indices]
+
+            get_gradcam_image(reduced_image_names, a_batch, x_batch, location)
+
+            scores, histories = irof(model=model,
+                    x_batch=x_batch,
+                    y_batch=y_batch,
+                    a_batch=a_batch,
+                    device=device)
+            
+            if scores is not None:
+                all_scores.extend(scores)
+                all_histories.extend(histories)
         
     plot_all_irof_curves(all_histories, location)
     plot_avg_irof_curve(all_histories, location)
