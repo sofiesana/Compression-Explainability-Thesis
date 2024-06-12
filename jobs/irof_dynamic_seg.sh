@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=irof_dynamic
-#SBATCH --time=12:00:00
+#SBATCH --time=20:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
