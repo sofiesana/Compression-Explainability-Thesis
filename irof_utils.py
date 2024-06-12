@@ -164,7 +164,7 @@ def get_sn_image(img_names, preds, location):
         path = os.path.join(RESULTS_ROOT, location, name+'_pred_sn.jpg')
         image.save(path)
 
-def get_gradcam_image(img_names, attributions, image, location, class_name = 'None'):
+def get_gradcam_image(img_names, attributions, image, location, class_name = None):
     for i in range(len(image)):
         name = img_names[i]
         og_img = (image[i].cpu().squeeze().permute(1,2,0).numpy())
