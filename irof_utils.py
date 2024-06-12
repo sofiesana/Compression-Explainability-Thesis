@@ -236,7 +236,6 @@ def plot_avg_irof_curve(histories, location, class_name = None):
     else:
         plt.ylabel('Score')
         path = os.path.join(RESULTS_ROOT, 'avg_irof.png')
-    path = os.path.join(RESULTS_ROOT, location, class_name, 'avg_irof.png')
     plt.savefig(path)
     plt.close()
 
