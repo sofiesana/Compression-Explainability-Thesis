@@ -173,9 +173,9 @@ def run_irof_sn(model, test_loader, location):
         valid_indices = []
 
         for i, att in enumerate(attributions):
-            print(att)
+            # print(att)
             if not np.all((att == 0)):
-                print("valid")
+                # print("valid")
                 valid_indices.append(i)
 
         if valid_indices:

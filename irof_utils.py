@@ -184,7 +184,7 @@ def get_attributions(model, image, class_category = None, class_mask_float = Non
     if class_category is not None:
         targets = [SemanticSegmentationTarget(class_category, class_mask) for class_mask in class_mask_float]
     else:
-        targets = [EntireOutputTarget()]
+        targets = [EntireOutputTarget() for _ in range(len(image))]
     with GradCAM(model=model, target_layers=target_layers) as cam:
         grayscale_cam = cam(input_tensor=image,
                             targets=targets)
