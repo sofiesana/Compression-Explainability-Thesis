@@ -229,6 +229,10 @@ if __name__ == "__main__":
             location = method + str(model_num)
 
             if method == "baseline":
+
+                rslt_path = os.path.join(RESULTS_ROOT, location)
+                if not os.path.isdir(rslt_path):
+                    os.makedirs(rslt_path)
                 
                 print("baseline model " + str(model_num))
                 test_loader = DataLoader(test_dataset, batch_size=16, num_workers=8, shuffle=True, pin_memory=True)
@@ -258,6 +262,10 @@ if __name__ == "__main__":
             else:
                 for ratio in PRUNING_RATIOS:
                     location = os.path.join(method + str(model_num), str(ratio))
+
+                    rslt_path = os.path.join(RESULTS_ROOT, location)
+                    if not os.path.isdir(rslt_path):
+                        os.makedirs(rslt_path)
                     
                     print(f"{method} model {model_num} ratio {ratio}")
                     test_loader = DataLoader(test_dataset, batch_size=16, num_workers=8, shuffle=True, pin_memory=True)

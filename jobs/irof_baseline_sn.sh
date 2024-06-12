@@ -61,5 +61,5 @@ python3 irof_seg_all.py --head all --method baseline --task sn --irof mean
 ########### GET RESULTS
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/irof/all/seg/baseline/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/irof/all/seg/baseline/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/irof/all/sn/baseline/job_${SLURM_JOBID}
+tar czvf /scratch/$USER/irof/all/sn/baseline/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
