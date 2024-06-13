@@ -338,10 +338,10 @@ if __name__ == "__main__":
                     torch.cuda.empty_cache()
                     gc.collect()
             
-            with open(os.path.join(RESULTS_ROOT, method + model_num + '_histories.pkl'), 'wb') as file:
+            with open(os.path.join(RESULTS_ROOT, method + str(model_num) + '_histories.pkl'), 'wb') as file:
                 pickle.dump(method_histories, file)
 
-            with open(os.path.join(RESULTS_ROOT, method + model_num + '_scores.pkl'), 'wb') as file:
+            with open(os.path.join(RESULTS_ROOT, method + str(model_num) + '_scores.pkl'), 'wb') as file:
                 pickle.dump(method_scores, file)
 
         all_scores[method] = method_scores
