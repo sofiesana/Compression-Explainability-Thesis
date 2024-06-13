@@ -255,7 +255,7 @@ if __name__ == "__main__":
                     os.makedirs(rslt_path)
                 
                 print("baseline model " + str(model_num))
-                test_loader = DataLoader(test_dataset, batch_size=16, num_workers=8, shuffle=True, pin_memory=True)
+                test_loader = DataLoader(test_dataset, batch_size=10, num_workers=8, shuffle=True, pin_memory=True)
                 evaluator = SceneNetEval(
                         device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                                     
@@ -289,7 +289,7 @@ if __name__ == "__main__":
                         os.makedirs(rslt_path)
                     
                     print(f"{method} model {model_num} ratio {ratio}")
-                    test_loader = DataLoader(test_dataset, batch_size=16, num_workers=8, shuffle=True, pin_memory=True)
+                    test_loader = DataLoader(test_dataset, batch_size=10, num_workers=8, shuffle=True, pin_memory=True)
                     evaluator = SceneNetEval(
                             device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                     
@@ -328,11 +328,11 @@ if __name__ == "__main__":
                 torch.cuda.empty_cache()
                 gc.collect()
         
-        # with open(os.path.join(RESULTS_ROOT, method + '_histories.pkl'), 'wb') as file:
-        #     pickle.dump(method_histories, file)
+        with open(os.path.join(RESULTS_ROOT, method + '_histories.pkl'), 'wb') as file:
+            pickle.dump(method_histories, file)
 
-        # with open(os.path.join(RESULTS_ROOT, method + 'scores.pkl'), 'wb') as file:
-        #     pickle.dump(method_scores, file)
+        with open(os.path.join(RESULTS_ROOT, method + 'scores.pkl'), 'wb') as file:
+            pickle.dump(method_scores, file)
 
         all_scores[method] = method_scores
         all_histories[method] = method_histories
