@@ -180,7 +180,7 @@ def run_irof_sn(model, test_loader, location):
                 valid_indices.append(i)
 
         if valid_indices:
-            print(valid_indices)
+            # print(valid_indices)
             reduced_image_names = np.array(img_names)[valid_indices]
             y_batch = preds[valid_indices]
             x_batch = gt_batch["img"][valid_indices]
@@ -216,6 +216,8 @@ if __name__ == "__main__":
         '--task', type=str, help='seg, sn', default="None")
     parser.add_argument(
         '--irof', type=str, help='mean, uniform', default="mean")
+    parser.add_argument(
+        '--model_num', type=int, help='1,2,3', default=None)
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -225,8 +227,15 @@ if __name__ == "__main__":
     head = args.head
     task = args.task
     irof_version = args.irof
+    model_number = args.model_num
     if task == "None":
-        task = None
+        task = None        
+
+    if model_number is None:
+        print("No model number given, running on all models")
+        model_num_list = [1,2,3]
+    else:
+        model_num_list = [model_number]
     
     PRUNING_METHODS = [method]
 
@@ -244,8 +253,8 @@ if __name__ == "__main__":
         method_histories = {}
         method_scores = {}
         
-        for model_num in range(1, NUM_MODELS+1):
-            print(torch.cuda.memory_summary())
+        for model_num in model_num_list:
+            # print(torch.cuda.memory_summary())
             location = method + str(model_num)
 
             if method == "baseline":

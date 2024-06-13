@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
-#SBATCH --mem=30GB
+#SBATCH --mem=10GB
 
 # remove all previously loaded modules
 module purge
@@ -24,26 +24,14 @@ tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
 ########### GET MODELS
 
 # make a directory in the TMPDIR for the pruned models
-mkdir -p $TMPDIR/pruned/dynamic/dynamic1
 mkdir -p $TMPDIR/pruned/dynamic/dynamic2
-mkdir -p $TMPDIR/pruned/dynamic/dynamic3
 
 # extract baselinme model from scratch to TMPDIR/dynamic
-
-tar xzf /scratch/$USER/pruned_models/dynamic/50/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
-tar xzf /scratch/$USER/pruned_models/dynamic/70/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
-tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
-tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic1/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic1
 
 tar xzf /scratch/$USER/pruned_models/dynamic/50/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
 tar xzf /scratch/$USER/pruned_models/dynamic/70/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
 tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
 tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic2/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic2
-
-tar xzf /scratch/$USER/pruned_models/dynamic/50/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
-tar xzf /scratch/$USER/pruned_models/dynamic/70/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
-tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
-tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
 
 ########### GET CODE
 
@@ -68,10 +56,10 @@ mkdir $TMPDIR/results
 ########### RUN CODE
 
 # Run training
-python3 irof_seg_all.py --head all --method dynamic --task seg --irof mean
+python3 irof_seg_all.py --head all --method dynamic --task seg --irof mean --model_num 2
 
 ########### GET RESULTS
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/irof/all/seg/dynamic/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/irof/all/seg/dynamic/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/irof/all/seg/dynamic/dynamic2_${SLURM_JOBID}
+tar czvf /scratch/$USER/irof/all/seg/dynamic/dynamic2_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
