@@ -1,5 +1,6 @@
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image, preprocess_image
+import gc
 from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
@@ -204,6 +205,8 @@ def run_irof_sn(model, test_loader, location):
 
 
 if __name__ == "__main__":
+    torch.cuda.empty_cache()
+
     parser = argparse.ArgumentParser(description='IROF Evaluation')
     parser.add_argument(
         '--head', type=str, help='mtl model head: all, ', default="all")
@@ -258,6 +261,7 @@ if __name__ == "__main__":
                 network_name = f"{dataset}_{method}"
                 path_to_model = os.path.join(os.environ.get('TMPDIR'), method, method + str(model_num), "tmp/results", f"best_{network_name}.pth")
 
+                torch.cuda.empty_cache()
                 net = load_model(device, 'n', task, path_to_model)
                 # net = SceneNet(TASKS_NUM_CLASS).to(device)
                 # net.load_state_dict(torch.load(path_to_model))
@@ -299,6 +303,7 @@ if __name__ == "__main__":
                     network_name = f"{dataset}_disparse_{method}_{ratio}"
 
                     path_to_model = os.path.join(os.environ.get('TMPDIR'), "pruned", method, method+str(model_num), "tmp/results", f"best_{network_name}.pth")
+                    torch.cuda.empty_cache()
                     net = load_model(device, 'y', task, path_to_model)
                     net.eval()
 
@@ -316,6 +321,11 @@ if __name__ == "__main__":
 
                     method_scores[model_num][ratio] = scores
                     method_histories[model_num][ratio] = histories
+                
+                # Clear the cache between different pruning ratios
+                del net
+                torch.cuda.empty_cache()
+                gc.collect()
         
         # with open(os.path.join(RESULTS_ROOT, method + '_histories.pkl'), 'wb') as file:
         #     pickle.dump(method_histories, file)
