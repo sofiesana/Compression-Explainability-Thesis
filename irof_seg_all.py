@@ -245,6 +245,7 @@ if __name__ == "__main__":
         method_scores = {}
         
         for model_num in range(1, NUM_MODELS+1):
+            print(torch.cuda.memory_summary())
             location = method + str(model_num)
 
             if method == "baseline":
