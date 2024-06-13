@@ -282,6 +282,7 @@ if __name__ == "__main__":
 
             else:
                 for ratio in PRUNING_RATIOS:
+                    print(torch.cuda.memory_summary())
                     location = os.path.join(method + str(model_num), str(ratio))
 
                     rslt_path = os.path.join(RESULTS_ROOT, location)
@@ -323,11 +324,11 @@ if __name__ == "__main__":
                     method_scores[model_num][ratio] = scores
                     method_histories[model_num][ratio] = histories
                 
-                # Clear the cache between different pruning ratios
-                del net
-                torch.cuda.empty_cache()
-                gc.collect()
-        
+                    # Clear the cache between different pruning ratios
+                    del net
+                    torch.cuda.empty_cache()
+                    gc.collect()
+            
         with open(os.path.join(RESULTS_ROOT, method + '_histories.pkl'), 'wb') as file:
             pickle.dump(method_histories, file)
 
