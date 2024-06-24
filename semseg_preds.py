@@ -121,7 +121,7 @@ if __name__ == "__main__":
                     os.makedirs(rslt_path)
                 
                 print("baseline model " + str(model_num))
-                test_loader = DataLoader(test_dataset, batch_size=5, num_workers=8, shuffle=True, pin_memory=True)
+                test_loader = DataLoader(test_dataset, batch_size=10, num_workers=8, shuffle=False, pin_memory=True)
                 evaluator = SceneNetEval(
                         device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                                     
@@ -137,6 +137,8 @@ if __name__ == "__main__":
                 curr_preds = []
 
                 for i, gt_batch in enumerate(test_loader):
+                    if i >= 5:
+                        break
                     print("batch:", i)
         
                     net.eval()
@@ -171,7 +173,7 @@ if __name__ == "__main__":
                         os.makedirs(rslt_path)
                     
                     print(f"{method} model {model_num} ratio {ratio}")
-                    test_loader = DataLoader(test_dataset, batch_size=10, num_workers=8, shuffle=True, pin_memory=True)
+                    test_loader = DataLoader(test_dataset, batch_size=10, num_workers=8, shuffle=False, pin_memory=True)
                     evaluator = SceneNetEval(
                             device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                     
@@ -185,7 +187,9 @@ if __name__ == "__main__":
                     curr_preds = []
 
                     for i, gt_batch in enumerate(test_loader):
-            
+                        if i >= 5:
+                            break
+
                         net.eval()
                         gt_batch["img"] = Variable(gt_batch["img"]).to(device)
                         if "seg" in gt_batch:
