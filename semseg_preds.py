@@ -35,27 +35,32 @@ def get_prediction_images(preds, img_names, save_location):
     resized_preds = F.interpolate(preds, (480, 640))
     for i, pred in enumerate(preds):
         normalized_masks = torch.nn.functional.softmax(pred, dim=0).cpu()
-        # Get the class prediction by selecting the class index with maximum probability
         class_predict = normalized_masks.argmax(dim=0).numpy()
-        # Get the unique classes present in the prediction
         unique_classes = np.unique(class_predict)
-        # Define a colormap based on the number of unique classes
         color_map = plt.get_cmap('viridis', len(unique_classes))
-        # Apply the colormap to the class prediction directly
         color_image = color_map(class_predict)
-        # Squeeze the color_image if it has an extra dimension
         color_image = np.squeeze(color_image)
-        # Ensure values are in the correct range (0 to 1)
         color_image = np.clip(color_image, 0, 1)
-        # # Display the color image
-        im = plt.imshow(color_image)
-        plt.axis('off')
 
         path = os.path.join(RESULTS_ROOT, save_location, img_names[i] + '_pred.png')
 
-        plt.savefig(path)
-        im.clear()
-        plt.close()
+        # Create a new figure for each image to avoid memory issues
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        
+        # Display the image
+        im = ax.imshow(color_image)
+        ax.axis('off')
+        
+        # Save the image
+        path = os.path.join(RESULTS_ROOT, save_location, img_names[i] + '_pred.png')
+        plt.savefig(path, bbox_inches='tight', pad_inches=0)
+        
+        # Clear the image to free memory
+        im.remove()
+        
+        # Close the figure to release memory
+        plt.close(fig)
 
 
 if __name__ == "__main__":
