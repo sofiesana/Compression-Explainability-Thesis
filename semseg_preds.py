@@ -48,12 +48,14 @@ def get_prediction_images(preds, img_names, save_location):
         # Ensure values are in the correct range (0 to 1)
         color_image = np.clip(color_image, 0, 1)
         # # Display the color image
-        plt.imshow(color_image)
+        im = plt.imshow(color_image)
         plt.axis('off')
 
         path = os.path.join(RESULTS_ROOT, save_location, img_names[i] + '_pred.png')
 
         plt.savefig(path)
+        im.clear()
+        plt.close()
 
 
 if __name__ == "__main__":
@@ -130,6 +132,7 @@ if __name__ == "__main__":
                 curr_preds = []
 
                 for i, gt_batch in enumerate(test_loader):
+                    print("batch:", i)
         
                     net.eval()
                     gt_batch["img"] = Variable(gt_batch["img"]).to(device)
