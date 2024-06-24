@@ -121,7 +121,7 @@ if __name__ == "__main__":
                     os.makedirs(rslt_path)
                 
                 print("baseline model " + str(model_num))
-                test_loader = DataLoader(test_dataset, batch_size=10, num_workers=8, shuffle=True, pin_memory=True)
+                test_loader = DataLoader(test_dataset, batch_size=5, num_workers=8, shuffle=True, pin_memory=True)
                 evaluator = SceneNetEval(
                         device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                                     
