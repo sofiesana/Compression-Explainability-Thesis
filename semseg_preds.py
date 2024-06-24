@@ -89,7 +89,7 @@ if __name__ == "__main__":
     else:
         model_num_list = [model_number]
     
-    PRUNING_METHODS = [method]
+    PRUNING_METHODS = ['baseline', 'static', 'dynamic', 'pt']
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
