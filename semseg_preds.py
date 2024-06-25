@@ -29,7 +29,7 @@ import quantus
 
 # PRUNING_METHODS = ["baseline", "pt", "static", "dynamic"]
 NUM_MODELS = 3
-PRUNING_RATIOS = [50, 70, 80, 90]
+
 
 def get_prediction_images(preds, img_names, save_location):
     resized_preds = F.interpolate(preds, (480, 640))
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--irof', type=str, help='mean, uniform', default="mean")
     parser.add_argument(
-        '--model_num', type=int, help='1,2,3', default=None)
+        '--ratio', type=int, help='0,70,80,90', default=None)
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -86,17 +86,13 @@ if __name__ == "__main__":
     head = args.head
     task = args.task
     irof_version = args.irof
-    model_number = args.model_num
+    ratio = args.ratio
     if task == "None":
         task = None        
 
-    if model_number is None:
-        print("No model number given, running on all models")
-        model_num_list = [1,2,3]
-    else:
-        model_num_list = [model_number]
-    
-    PRUNING_METHODS = ['baseline', 'static', 'dynamic', 'pt']
+    model_num_list = [1]
+    PRUNING_RATIOS = [ratio]
+    PRUNING_METHODS = [method]
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
