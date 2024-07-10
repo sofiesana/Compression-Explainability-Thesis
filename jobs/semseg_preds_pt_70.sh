@@ -26,7 +26,7 @@ mkdir -p $TMPDIR/pruned/pt/pt1
 
 # extract baselinme model from scratch to TMPDIR/pt
 
-tar xzf /scratch/$USER/pruned_models/pt/50/pt1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
+tar xzf /scratch/$USER/pruned_models/pt/70/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
 
 ########### GET CODE
 
@@ -51,10 +51,10 @@ mkdir $TMPDIR/results
 ########### RUN CODE
 
 # Run training
-python3 semseg_preds.py --head all --task seg --irof mean --method pt --ratio 50
+python3 semseg_preds.py --head all --task seg --irof mean --method pt --ratio 70
 
 ########### GET RESULTS
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/seg_preds/pt1/50/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/seg_preds/pt1/50/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/seg_preds/pt1/70/job_${SLURM_JOBID}
+tar czvf /scratch/$USER/seg_preds/pt1/70/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results

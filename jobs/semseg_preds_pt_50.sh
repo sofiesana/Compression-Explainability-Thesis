@@ -26,7 +26,7 @@ mkdir -p $TMPDIR/pruned/pt/pt1
 
 # extract baselinme model from scratch to TMPDIR/pt
 
-tar xzf /scratch/$USER/pruned_models/pt/50/pt1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
+tar xzf /scratch/$USER/pruned_models/pt/50/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
 
 ########### GET CODE
 
