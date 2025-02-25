@@ -1,0 +1,9 @@
+# ignore data folder
+data/
+# ignore all .pyc
+*.pyc
+# ignore all .log
+#ignore all .vscode folder 
+.vscode/
+# ignore venv
+.venv/
