@@ -68,7 +68,7 @@ def explanation_generator(test_loader, model, device, task, location, num_images
             img_names = gt_batch["name"]
             image = gt_batch["img"]
             
-            get_sn_image(img_names, preds, None, location)
+            get_sn_image(img_names, preds, location)
 
             start_task = time.time()
             print("Time till start of task: ", round(start_task - begin, 3), " seconds")
