@@ -7,3 +7,4 @@ argparse
 opencv-python
 tqdm
 grad-cam
+pandas
