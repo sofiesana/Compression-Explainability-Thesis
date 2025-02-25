@@ -7,3 +7,10 @@ data/
 .vscode/
 # ignore venv
 .venv/
+
+# ignore .xplanations_new/ folder
+xplanations_new/
+
+poster_images/
+
+models/
