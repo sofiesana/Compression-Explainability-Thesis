@@ -66,7 +66,9 @@ if __name__ == '__main__':
                 if not os.path.isdir(rslt_path):
                     os.makedirs(rslt_path)
                 
-                print("baseline model " + str(model_num))
+                model_name = "baseline model " + str(model_num)
+                print(model_name)
+                
                 test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=False, pin_memory=True)
                 evaluator = SceneNetEval(
                         device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
