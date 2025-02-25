@@ -6,13 +6,13 @@ from pytorch_grad_cam.utils.image import show_cam_on_image, preprocess_image
 import matplotlib.pyplot as plt
 
 tmpdir = os.environ.get('TMPDIR')
-nyuv2_dir = os.path.join(tmpdir, 'nyuv2/new_data/nyu_v2/')
-pt_dir = os.path.join(tmpdir, 'pt/tmp/results/best_nyuv2_baseline.pth')
-results_dir = os.path.join(tmpdir, 'results')
+# nyuv2_dir = os.path.join(tmpdir, 'nyuv2/new_data/nyu_v2/')
+# pt_dir = os.path.join(tmpdir, 'pt/tmp/results/best_nyuv2_baseline.pth')
+# results_dir = os.path.join(tmpdir, 'results')
 
-RESULTS_ROOT = results_dir
-DATA_ROOT = nyuv2_dir
-MODEL_ROOT = pt_dir
+# RESULTS_ROOT = results_dir
+# DATA_ROOT = nyuv2_dir
+# MODEL_ROOT = pt_dir
 
 TASKS = ["seg", "sn"]
 TASKS_NUM_CLASS = [40, 3]
@@ -134,8 +134,9 @@ def load_model(device, pruned, task, model_path):
                 module = prune.identity(module, 'weight')
 
     # Load the state dictionary into your model
-    model.load_state_dict(torch.load(model_path))
-    model.cuda()
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    if device == 'cuda':
+        model = model.cuda()
 
     return model
 
