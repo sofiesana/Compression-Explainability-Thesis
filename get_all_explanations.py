@@ -66,6 +66,7 @@ def explanation_generator(test_loader, model, device, task, num_images_to_gen_ex
             
             
             img_names = gt_batch["name"]
+            print("img_names: ", img_names)
             image = gt_batch["img"]
             
             get_sn_image(img_names, preds, None)
@@ -150,7 +151,7 @@ if __name__ == '__main__':
                     os.makedirs(rslt_path)
                 
                 print("baseline model " + str(model_num))
-                test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
+                test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=False, pin_memory=True)
                 evaluator = SceneNetEval(
                         device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
                                     
@@ -186,7 +187,7 @@ if __name__ == '__main__':
                         os.makedirs(rslt_path)
                     
                     print(f"{method} model {model_num} ratio {ratio}")
-                    test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=True, pin_memory=True)
+                    test_loader = DataLoader(test_dataset, batch_size=1, num_workers=8, shuffle=False, pin_memory=True)
                     evaluator = SceneNetEval(
                             device, TASKS, TASKS_NUM_CLASS, IMAGE_SHAPE, dataset, DATA_ROOT)
 
