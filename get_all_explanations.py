@@ -26,7 +26,7 @@ def get_sn_image(img_names, preds, location):
         path = os.path.join('poster_images', name+'_pred_sn.jpg')
         image.save(path)
 
-def explanation_generator(test_loader, model, device, task, num_images_to_gen_explanation = 1):
+def explanation_generator(test_loader, model, device, task, num_images_to_gen_explanation = 2):
     # tasks = ["SemSeg", "Depth", "SurNorm", "multi"]
     # modes = ["Generation", "Evaluation"]
     tasks = [task] # only select the tasks that u wanna generate explantions for
@@ -167,7 +167,7 @@ if __name__ == '__main__':
                     break
                 elif task == 'sn':
                     print("######### Beginning explanation generation.")
-                    explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200)
+                    explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=2)
                     
                 else:
                     print("task not recognized")
@@ -204,7 +204,7 @@ if __name__ == '__main__':
                         break
                     elif task == 'sn':
                         print("######### Beginning explanation generation.")
-                        explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200)
+                        explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=2)
                     else:
                         print("task not recognized")
                         break
