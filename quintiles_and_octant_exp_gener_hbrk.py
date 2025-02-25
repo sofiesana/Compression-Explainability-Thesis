@@ -167,8 +167,7 @@ def generate_explanations(task, multi_task_model, test_data, test_pred_full, ima
             # plt.show()
             # save image
             # Ensure the directory exists before saving the image
-            poster_images_dir = os.path.join(location, 'poster_images')
-            os.makedirs(poster_images_dir, exist_ok=True)
+            
             plt.imsave(os.path.join(location,f'poster_images/masked_image{k}_{norm_class}.png'), masked_image)
 
             # save_images(mask, "mask_image_surface_norms_pre_normalization" + str(norm_class) + ":" + str(k))

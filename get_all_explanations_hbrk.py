@@ -23,6 +23,8 @@ def get_sn_image(img_names, preds, location):
         sn_output = np.uint8(255*pred.detach().cpu().numpy())
         image_array = np.transpose(sn_output, (1,2,0))
         image = Image.fromarray(image_array)
+        poster_images_dir = os.path.join(location, 'poster_images')
+        os.makedirs(poster_images_dir, exist_ok=True)
         path = os.path.join(location, 'poster_images', name+'_pred_sn.jpg')
         image.save(path)
 
