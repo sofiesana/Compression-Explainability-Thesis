@@ -66,7 +66,7 @@ def show_mask_depth_and_norms(test_data, test_pred, cat_class):
 
     return mask_one_float, repeated_mask
 
-def show_seg_grad_cam(multi_task_model, test_data, cat_class, mask_one_float, device, task_type="semantic"):
+def show_seg_grad_cam(multi_task_model, test_data, cat_class, mask_one_float, device, k, task_type="semantic"):
     if task_type == "normals":
         layer = [multi_task_model.backbone.blocks[3][2].conv2]
     target_layers = layer
@@ -82,7 +82,7 @@ def show_seg_grad_cam(multi_task_model, test_data, cat_class, mask_one_float, de
             grayscale_cam = cam(input_tensor=test_data.to(device), targets=targets)[0, :]
             cam_image = show_cam_on_image(og_img, grayscale_cam, use_rgb=True)
             cam_image_final = Image.fromarray(cam_image)
-            cam_image_final.save(os.path.join(RESULTS_ROOT, f'poster_images/cam_image_{cat_class}.png'))
+            cam_image_final.save(os.path.join(RESULTS_ROOT, f'poster_images/{k}_cam_image_{cat_class}.png'))
 
     return cam_image, grayscale_cam
 
@@ -163,12 +163,12 @@ def generate_explanations(task, multi_task_model, test_data, test_pred_full, ima
             masked_image = (masked_image - masked_image.min()) / (masked_image.max() - masked_image.min())
             plt.imshow(masked_image)
             plt.title(f'Masked Image for Norm Class {norm_class}')
-            plt.show()
+            # plt.show()
             # save image
             plt.imsave(os.path.join(RESULTS_ROOT,f'poster_images/masked_image{k}_{norm_class}.png'), masked_image)
 
             # save_images(mask, "mask_image_surface_norms_pre_normalization" + str(norm_class) + ":" + str(k))
-            cam_image, grayscale_cam = show_seg_grad_cam(multi_task_model, test_data, norm_class, mask_one_float, device, task_type="normals")
+            cam_image, grayscale_cam = show_seg_grad_cam(multi_task_model, test_data, norm_class, mask_one_float, device, k, task_type="normals")
             # save_images(cam_image, "cam_image_surface_norms_pre_normalization" + str(norm_class) + ":" + str(k))
             create_cam_time = time.time()
             # print("Time to create CAM: ", round(create_cam_time - prev_clas_time, 3), " seconds", end=" ")
