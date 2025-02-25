@@ -162,7 +162,7 @@ if __name__ == '__main__':
                     break
                 elif task == 'sn':
                     print("######### Beginning explanation generation.")
-                    explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200)
+                    explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200, location = rslt_path)
                     
                 else:
                     print("task not recognized")
