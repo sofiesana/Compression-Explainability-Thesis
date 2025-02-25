@@ -23,10 +23,10 @@ def get_sn_image(img_names, preds, location):
         sn_output = np.uint8(255*pred.detach().cpu().numpy())
         image_array = np.transpose(sn_output, (1,2,0))
         image = Image.fromarray(image_array)
-        path = os.path.join('poster_images', name+'_pred_sn.jpg')
+        path = os.path.join(location, 'poster_images', name+'_pred_sn.jpg')
         image.save(path)
 
-def explanation_generator(test_loader, model, device, task, num_images_to_gen_explanation = 1):
+def explanation_generator(test_loader, model, device, task, location, num_images_to_gen_explanation = 1):
     # tasks = ["SemSeg", "Depth", "SurNorm", "multi"]
     # modes = ["Generation", "Evaluation"]
     tasks = [task] # only select the tasks that u wanna generate explantions for
@@ -68,7 +68,7 @@ def explanation_generator(test_loader, model, device, task, num_images_to_gen_ex
             img_names = gt_batch["name"]
             image = gt_batch["img"]
             
-            get_sn_image(img_names, preds, None)
+            get_sn_image(img_names, preds, None, location)
 
             start_task = time.time()
             print("Time till start of task: ", round(start_task - begin, 3), " seconds")
@@ -82,7 +82,7 @@ def explanation_generator(test_loader, model, device, task, num_images_to_gen_ex
             print("Time to pre-processing: ", round(pre_pro_time - start_task, 3), " seconds")
 
             """ Generate Explanations """
-            explanations_generated = generate_explanations(task, model, image, preds, image_np_depth_quin, norms_one_hot, img_names, device)
+            explanations_generated = generate_explanations(task, model, image, preds, image_np_depth_quin, norms_one_hot, img_names, device, location)
 
             batch_end = time.time()
             print("Time for one batch: ", round(batch_end - batch_start, 3), " seconds")
@@ -199,7 +199,7 @@ if __name__ == '__main__':
                         break
                     elif task == 'sn':
                         print("######### Beginning explanation generation.")
-                        explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200)
+                        explanation_generator(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200, location = rslt_path)
                     else:
                         print("task not recognized")
                         break

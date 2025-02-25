@@ -66,7 +66,7 @@ def show_mask_depth_and_norms(test_data, test_pred, cat_class):
 
     return mask_one_float, repeated_mask
 
-def show_seg_grad_cam(multi_task_model, test_data, cat_class, mask_one_float, device, k, task_type="semantic"):
+def show_seg_grad_cam(multi_task_model, test_data, cat_class, mask_one_float, device, k, location, task_type="semantic"):
     if task_type == "normals":
         layer = [multi_task_model.backbone.blocks[3][2].conv2]
     target_layers = layer
@@ -82,7 +82,7 @@ def show_seg_grad_cam(multi_task_model, test_data, cat_class, mask_one_float, de
             grayscale_cam = cam(input_tensor=test_data.to(device), targets=targets)[0, :]
             cam_image = show_cam_on_image(og_img, grayscale_cam, use_rgb=True)
             cam_image_final = Image.fromarray(cam_image)
-            cam_image_final.save(os.path.join(RESULTS_ROOT, f'poster_images/{k}_cam_image_{cat_class}.png'))
+            cam_image_final.save(os.path.join(location, f'poster_images/{k}_cam_image_{cat_class}.png'))
 
     return cam_image, grayscale_cam
 
@@ -145,13 +145,14 @@ def preprocess_surface_normals(test_pred_full):
 
 """ Main Explanation Generation Function """
 
-def generate_explanations(task, multi_task_model, test_data, test_pred_full, image_np_depth_dec, norms_one_hot, k, device):
+def generate_explanations(task, multi_task_model, test_data, test_pred_full, image_np_depth_dec, norms_one_hot, k, device, location):
     if task == "SurNorm":
         counts = np.zeros(8)
         explanation_images = [] # in form ((image, task, octant),...)
 
         prev_clas_time = time.time()
         for norm_class in range(8):
+            
             mask_one_float, mask = show_mask_depth_and_norms(test_data, norms_one_hot, norm_class)
             # Apply mask_one_float to test_data, blacking out the relevant pixels
             mask_one_float_tensor = torch.from_numpy(mask_one_float).unsqueeze(0).unsqueeze(0).to(device)
@@ -165,10 +166,13 @@ def generate_explanations(task, multi_task_model, test_data, test_pred_full, ima
             plt.title(f'Masked Image for Norm Class {norm_class}')
             # plt.show()
             # save image
-            plt.imsave(os.path.join(RESULTS_ROOT,f'poster_images/masked_image{k}_{norm_class}.png'), masked_image)
+            # Ensure the directory exists before saving the image
+            poster_images_dir = os.path.join(location, 'poster_images')
+            os.makedirs(poster_images_dir, exist_ok=True)
+            plt.imsave(os.path.join(location,f'poster_images/masked_image{k}_{norm_class}.png'), masked_image)
 
             # save_images(mask, "mask_image_surface_norms_pre_normalization" + str(norm_class) + ":" + str(k))
-            cam_image, grayscale_cam = show_seg_grad_cam(multi_task_model, test_data, norm_class, mask_one_float, device, k, task_type="normals")
+            cam_image, grayscale_cam = show_seg_grad_cam(multi_task_model, test_data, norm_class, mask_one_float, device, k, task_type="normals", location=location)
             # save_images(cam_image, "cam_image_surface_norms_pre_normalization" + str(norm_class) + ":" + str(k))
             create_cam_time = time.time()
             # print("Time to create CAM: ", round(create_cam_time - prev_clas_time, 3), " seconds", end=" ")
@@ -178,9 +182,11 @@ def generate_explanations(task, multi_task_model, test_data, test_pred_full, ima
                 
                 class_cam_image = np.array(grayscale_cam)
                 explantion_on_image = np.array(cam_image)
-
-                np.save(os.path.join(RESULTS_ROOT,"xplanations_new/Surface Normals/X_Image" + str(k) + "_norm" + str(norm_class)), class_cam_image)
-                np.save(os.path.join(RESULTS_ROOT,"xplanations_new/Surface Normals/XonI_Image" + str(k) + "_norm" + str(norm_class)), explantion_on_image)
+                # Ensure the directory exists before saving the image
+                poster_images_dir = os.path.join(location, 'xplanations_new/Surface Normals')
+                os.makedirs(poster_images_dir, exist_ok=True)
+                np.save(os.path.join(location,"xplanations_new/Surface Normals/X_Image" + str(k) + "_norm" + str(norm_class)), class_cam_image)
+                np.save(os.path.join(location,"xplanations_new/Surface Normals/XonI_Image" + str(k) + "_norm" + str(norm_class)), explantion_on_image)
 
                 # Add grad-cam image to list
                 explanation_images.append((grayscale_cam, task, norm_class))
