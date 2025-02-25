@@ -50,7 +50,7 @@ mkdir $TMPDIR/results
 ########### RUN CODE
 
 # Run training
-python3 generate_all_explanations_hbrk.py --method baseline --task sn
+python3 get_all_explanations_hbrk.py --method baseline --task sn
 
 ########### GET RESULTS
 
