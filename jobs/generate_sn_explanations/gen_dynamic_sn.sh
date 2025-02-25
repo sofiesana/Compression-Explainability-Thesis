@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=explanations_sn_dynamic
-#SBATCH --time=00:20:00
+#SBATCH --time=01:30:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
