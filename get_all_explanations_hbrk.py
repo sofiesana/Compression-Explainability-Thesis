@@ -45,6 +45,8 @@ def explanation_generator(test_loader, model, device, task, location, num_images
 
     with torch.no_grad():  # operations inside don't track history  (e.g. loss calculation) 
         for i, gt_batch in enumerate(test_loader):
+            # print progres through the dataset
+            print("Image ", i)
             if i > num_images_to_gen_explanation:
                 print("Finished generating explanations for ", num_images_to_gen_explanation, " images.")
                 break
