@@ -72,7 +72,7 @@ def explanation_generator(test_loader, model, device, task, location, num_images
             img_names = gt_batch["name"]
             image = gt_batch["img"]
             
-            get_sn_image(img_names, preds, location)
+            # get_sn_image(img_names, preds, location)
 
             start_task = time.time()
             print("Time till start of task: ", round(start_task - begin, 3), " seconds")
@@ -96,7 +96,7 @@ def explanation_generator(test_loader, model, device, task, location, num_images
 # main
 if __name__ == '__main__':   
 
-    # torch.cuda.empty_cache()
+    torch.cuda.empty_cache()
 
     parser = argparse.ArgumentParser(description='IROF Evaluation')
     parser.add_argument(
