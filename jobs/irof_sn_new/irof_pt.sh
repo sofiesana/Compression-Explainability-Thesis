@@ -32,20 +32,20 @@ mkdir -p $TMPDIR/pruned/pt/pt3
 
 # extract baselinme model from scratch to TMPDIR/pt
 
-tar xzf /scratch/$USER/pruned_models/pt/50/pt1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
-tar xzf /scratch/$USER/pruned_models/pt/70/pt1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
-tar xzf /scratch/$USER/pruned_models/pt/80/pt1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
-tar xzf /scratch/$USER/pruned_models/pt/90/pt1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
+tar xzf /scratch/$USER/pruned_models/pt/50/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
+tar xzf /scratch/$USER/pruned_models/pt/70/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
+tar xzf /scratch/$USER/pruned_models/pt/80/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
+tar xzf /scratch/$USER/pruned_models/pt/90/baseline1/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt1
 
-tar xzf /scratch/$USER/pruned_models/pt/50/pt2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
-tar xzf /scratch/$USER/pruned_models/pt/70/pt2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
-tar xzf /scratch/$USER/pruned_models/pt/80/pt2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
-tar xzf /scratch/$USER/pruned_models/pt/90/pt2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
+tar xzf /scratch/$USER/pruned_models/pt/50/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
+tar xzf /scratch/$USER/pruned_models/pt/70/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
+tar xzf /scratch/$USER/pruned_models/pt/80/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
+tar xzf /scratch/$USER/pruned_models/pt/90/baseline2/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt2
 
-tar xzf /scratch/$USER/pruned_models/pt/50/pt3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
-tar xzf /scratch/$USER/pruned_models/pt/70/pt3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
-tar xzf /scratch/$USER/pruned_models/pt/80/pt3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
-tar xzf /scratch/$USER/pruned_models/pt/90/pt3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
+tar xzf /scratch/$USER/pruned_models/pt/50/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
+tar xzf /scratch/$USER/pruned_models/pt/70/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
+tar xzf /scratch/$USER/pruned_models/pt/80/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
+tar xzf /scratch/$USER/pruned_models/pt/90/baseline3/trained_results.tar.gz -C $TMPDIR/pruned/pt/pt3
 
 ########### GET CODE
 
