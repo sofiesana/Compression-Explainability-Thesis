@@ -68,7 +68,7 @@ def plot_avg_irof_curve(histories, task, location, class_name = None):
     print("Saved at: ", path)
     plt.close()
 
-def run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, num_images_to_gen_irof = 200):
+def run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, XPLANATIONS_ROOT, num_images_to_gen_irof = 200):
 
     class_scores = {}
     class_histories = {}
@@ -103,7 +103,7 @@ def run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_clas
             # file_name = "./saved_explanations/" + model_name + "xplanations_new/Surface Normals/X_Image" + str(k) + "_norm" + str(norm_num) + ".npy"
 
             # NEED TO FIX THIS: ON HABROK YOU WILL HAVE TO UNZIP THE RESULTS FOLDER AND THEN USE THE PATH TO THE EXPLANATIONS
-            file_name = "xplanations_new/Surface Normals/X_Image" + str(img_names) + "_norm" + str(norm_num) + ".npy"
+            file_name = os.path.join(XPLANATIONS_ROOT, "xplanations_new/Surface Normals/X_Image" + str(img_names) + "_norm" + str(norm_num) + ".npy")
             if os.path.isfile(file_name):
                 loaded_explanation = np.load(file_name)
                 image_explanations.append((loaded_explanation, norm_num))
@@ -155,7 +155,7 @@ def run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_clas
     return class_scores, class_histories  
 
 
-def irof_caller(model, model_name, test_loader, location, device):
+def irof_caller(model, model_name, test_loader, location, device, XPLANATIONS_ROOT):
     model.eval()
     print("Evaluating Irof for model: ", model_name)
 
@@ -166,7 +166,7 @@ def irof_caller(model, model_name, test_loader, location, device):
             print("Task: ", task)
             if task == "sn":
                 sem_idx_to_class = [(-1,-1,-1), (-1, 1, -1), (1, -1, -1), (1, 1, -1), (-1, -1, 1), (-1, 1, 1), (1, -1, 1), (1, 1, 1)]
-                scores, histories = run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, num_images_to_gen_irof=2)
+                scores, histories = run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, XPLANATIONS_ROOT, num_images_to_gen_irof=2)
 
             path = "Irof_results/" + task
             os.makedirs(path, exist_ok=True)

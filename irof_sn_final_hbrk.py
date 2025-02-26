@@ -62,6 +62,8 @@ if __name__ == '__main__':
             location = method + str(model_num)
 
             if method == "baseline":
+                XPLANATIONS_ROOT = os.path.join(tmpdir, 'results/tmp/results/baseline'+str(model_num))
+
 
                 rslt_path = os.path.join(RESULTS_ROOT, location)
                 if not os.path.isdir(rslt_path):
@@ -87,7 +89,7 @@ if __name__ == '__main__':
                     break
                 elif task == 'sn':
                     print("######### Beginning explanation generation.")
-                    irof_caller(net, model_name, test_loader, location, device)
+                    irof_caller(net, model_name, test_loader, location, device, XPLANATIONS_ROOT)
                     
                 else:
                     print("task not recognized")
@@ -104,6 +106,8 @@ if __name__ == '__main__':
                     rslt_path = os.path.join(RESULTS_ROOT, location)
                     if not os.path.isdir(rslt_path):
                         os.makedirs(rslt_path)
+
+                    XPLANATIONS_ROOT = os.path.join(tmpdir, 'results/tmp/results/'+method+str(model_num), str(ratio))
                     
                     model_name = f"{method} model {model_num} ratio {ratio}"
                     print(model_name)
@@ -125,7 +129,7 @@ if __name__ == '__main__':
                         break
                     elif task == 'sn':
                         print("######### Beginning explanation generation.")
-                        irof_caller(test_loader, net, device, "SurNorm", num_images_to_gen_explanation=200, location = rslt_path)
+                        irof_caller(net, model_name, test_loader, location, device, XPLANATIONS_ROOT)
                     else:
                         print("task not recognized")
                         break
