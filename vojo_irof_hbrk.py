@@ -69,7 +69,7 @@ def plot_avg_irof_curve(histories, task, location, class_name = None):
     else:
         plt.ylabel('Score')
         filenamepath = os.path.join(location, "Irof_results/" + task + "/", 'avg_irof.png')
-    plt.savefig(path)
+    plt.savefig(filenamepath)
     print("Saved at: ", filenamepath)
     plt.close()
 
