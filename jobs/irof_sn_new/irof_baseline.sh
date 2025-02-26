@@ -4,7 +4,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
-#SBATCH --mem=20GB
+#SBATCH --mem=5GB
 
 # remove all previously loaded modules
 module purge
@@ -17,6 +17,7 @@ source $HOME/venvs/first/bin/activate
 
 # make a directory in the TMPDIR for the dataset
 mkdir $TMPDIR/nyuv2
+mkdir $TMPDIR/explanations
 
 # extract data from scratch to TMPDIR/nyuv2
 tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
