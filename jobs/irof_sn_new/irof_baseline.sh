@@ -37,6 +37,12 @@ tar xzf /scratch/$USER/baseline/baseline3/results.tar.gz -C $TMPDIR/baseline/bas
 
 ########### GET CODE
 
+# make a directory in the TMPDIR for quantus
+mkdir $TMPDIR/quantus
+
+# Copy code to $TMPDIR
+cp -r /scratch/s4716671/github/Quantus-Thesis-Version $TMPDIR/quantus
+
 # make a directory in the TMPDIR for the code
 mkdir $TMPDIR/code
 
