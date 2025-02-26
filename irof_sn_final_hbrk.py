@@ -59,10 +59,10 @@ if __name__ == '__main__':
     for method in PRUNING_METHODS:
         print("check 1")
         for model_num in model_num_list:
-            location = method + str(model_num)
 
             if method == "baseline":
-                XPLANATIONS_ROOT = os.path.join(tmpdir, 'results/tmp/results/baseline'+str(model_num))
+                location = method + str(model_num)
+                XPLANATIONS_ROOT = os.path.join(tmpdir, 'explanations', 'results/tmp/results/baseline'+str(model_num))
 
 
                 rslt_path = os.path.join(RESULTS_ROOT, location)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                     break
                 elif task == 'sn':
                     print("######### Beginning explanation generation.")
-                    irof_caller(net, model_name, test_loader, location, device, XPLANATIONS_ROOT)
+                    irof_caller(net, model_name, test_loader, rslt_path, device, XPLANATIONS_ROOT)
                     
                 else:
                     print("task not recognized")
@@ -107,7 +107,7 @@ if __name__ == '__main__':
                     if not os.path.isdir(rslt_path):
                         os.makedirs(rslt_path)
 
-                    XPLANATIONS_ROOT = os.path.join(tmpdir, 'results/tmp/results/'+method+str(model_num), str(ratio))
+                    XPLANATIONS_ROOT = os.path.join(tmpdir, 'explanations', 'results/tmp/results/'+method+str(model_num), str(ratio))
                     
                     model_name = f"{method} model {model_num} ratio {ratio}"
                     print(model_name)
@@ -129,7 +129,7 @@ if __name__ == '__main__':
                         break
                     elif task == 'sn':
                         print("######### Beginning explanation generation.")
-                        irof_caller(net, model_name, test_loader, location, device, XPLANATIONS_ROOT)
+                        irof_caller(net, model_name, test_loader, rslt_path, device, XPLANATIONS_ROOT)
                     else:
                         print("task not recognized")
                         break
