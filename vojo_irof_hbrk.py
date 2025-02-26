@@ -171,7 +171,7 @@ def irof_caller(model, model_name, test_loader, location, device, XPLANATIONS_RO
             print("Task: ", task)
             if task == "sn":
                 sem_idx_to_class = [(-1,-1,-1), (-1, 1, -1), (1, -1, -1), (1, 1, -1), (-1, -1, 1), (-1, 1, 1), (1, -1, 1), (1, 1, 1)]
-                scores, histories = run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, XPLANATIONS_ROOT, num_images_to_gen_irof=10)
+                scores, histories = run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, XPLANATIONS_ROOT, num_images_to_gen_irof=200)
 
             path = "Irof_results/" + task
             os.makedirs(path, exist_ok=True)
