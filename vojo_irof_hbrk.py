@@ -6,6 +6,7 @@ import torch
 import sys
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
+import torch.nn.functional as F
 
 # Get the value of the TMPDIR environment variable
 tmpdir = os.environ.get('TMPDIR')
@@ -92,6 +93,7 @@ def run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_clas
 
         print("getting preds")
         preds = model(gt_batch["img"])
+        print(F.normalize(preds, p=2, dim=1))
         
         img_names = gt_batch["name"]
         image = gt_batch["img"]
