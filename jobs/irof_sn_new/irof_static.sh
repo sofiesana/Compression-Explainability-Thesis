@@ -21,7 +21,7 @@ mkdir $TMPDIR/explanations
 
 # extract data from scratch to TMPDIR/nyuv2
 tar xzf /scratch/$USER/nyuv2/nyu_v2_with_val.tar.gz -C $TMPDIR/nyuv2
-tar xzf /scratch/$USER/explanations/all/sn/static/job_15357437/results.tar.gz -C $TMPDIR/explanations
+tar xzf /scratch/$USER/explanations/all/sn/static/job_15362006/results.tar.gz -C $TMPDIR/explanations
 
 ########### GET MODELS
 
