@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=explanations_sn_dynamic
-#SBATCH --time=02:00:00
+#SBATCH --time=06:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
-#SBATCH --mem=80GB
+#SBATCH --mem=12GB
 
 # remove all previously loaded modules
 module purge
@@ -48,6 +48,12 @@ tar xzf /scratch/$USER/pruned_models/dynamic/80/dynamic3/trained_results.tar.gz 
 tar xzf /scratch/$USER/pruned_models/dynamic/90/dynamic3/trained_results.tar.gz -C $TMPDIR/pruned/dynamic/dynamic3
 
 ########### GET CODE
+
+# make a directory in the TMPDIR for quantus
+mkdir $TMPDIR/quantus
+
+# Copy code to $TMPDIR
+cp -r /scratch/s4716671/github/Quantus-Thesis-Version $TMPDIR/quantus
 
 # make a directory in the TMPDIR for the code
 mkdir $TMPDIR/code
