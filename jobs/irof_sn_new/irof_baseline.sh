@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=irof_sn_baselines
-#SBATCH --time=00:30:00
+#SBATCH --time=00:10:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
