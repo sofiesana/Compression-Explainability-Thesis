@@ -25,6 +25,8 @@ def plot_all_irof_curves(histories, task, location, class_name = None):
     plt.title('IROF Curve')
     plt.xlabel('Number of Segments Removed')
     plt.grid(True)
+    path = os.path.join(location, "Irof_results/" + task)
+    os.makedirs(path, exist_ok=True)
     if class_name is not None:
         if task == "sn":
             plt.ylabel('Surface Normal Octant \'' + str(class_name) + '\' Score')
@@ -39,6 +41,7 @@ def plot_all_irof_curves(histories, task, location, class_name = None):
 
 def plot_avg_irof_curve(histories, task, location, class_name = None):
     path = None
+    filenamepath = None
     # Step 1: Find the length of the longest list
     max_length = max(len(lst) for lst in histories)
 
@@ -56,16 +59,18 @@ def plot_avg_irof_curve(histories, task, location, class_name = None):
     plt.xlabel('Number of Segments Removed')
     plt.grid(True)
 
+    path = os.path.join(location, "Irof_results/" + task)
+    os.makedirs(path, exist_ok=True)
+
     if class_name is not None:
         if task == "sn":
             plt.ylabel('Surface Normal Octant \'' + str(class_name) + '\' Score')
-        path = os.path.join(location, "Irof_results/" + task + "/", str(class_name) + ' avg_irof.png')
+        filenamepath = os.path.join(location, "Irof_results/" + task + "/", str(class_name) + ' avg_irof.png')
     else:
         plt.ylabel('Score')
-        path = os.path.join(location, "Irof_results/" + task + "/", 'avg_irof.png')
-    os.makedirs(path, exist_ok=True)
+        filenamepath = os.path.join(location, "Irof_results/" + task + "/", 'avg_irof.png')
     plt.savefig(path)
-    print("Saved at: ", path)
+    print("Saved at: ", filenamepath)
     plt.close()
 
 def run_irof_surf_norm(model, model_name, test_loader, location, sem_idx_to_class, device, XPLANATIONS_ROOT, num_images_to_gen_irof = 200):
