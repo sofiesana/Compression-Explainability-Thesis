@@ -34,7 +34,6 @@ def plot_all_irof_curves(histories, task, location, class_name = None):
     else:
         plt.ylabel('Class Score')
         path = os.path.join(location, "Irof_results/" + task + "/", 'all_irof.png')
-    os.makedirs(path, exist_ok=True)
     plt.savefig(path)
     print("Saved at: ", path)
     plt.close()
