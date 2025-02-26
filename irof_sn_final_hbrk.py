@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
             if method == "baseline":
                 location = method + str(model_num)
-                XPLANATIONS_ROOT = os.path.join(tmpdir, 'explanations', 'results/tmp/results/baseline'+str(model_num))
+                XPLANATIONS_ROOT = os.path.join(tmpdir, 'explanations', 'tmp/results/baseline'+str(model_num))
 
 
                 rslt_path = os.path.join(RESULTS_ROOT, location)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
                     if not os.path.isdir(rslt_path):
                         os.makedirs(rslt_path)
 
-                    XPLANATIONS_ROOT = os.path.join(tmpdir, 'explanations', 'results/tmp/results/'+method+str(model_num), str(ratio))
+                    XPLANATIONS_ROOT = os.path.join(tmpdir, 'explanations', 'tmp/results/'+method+str(model_num), str(ratio))
                     
                     model_name = f"{method} model {model_num} ratio {ratio}"
                     print(model_name)
