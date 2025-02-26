@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=irof_sn_baselines
-#SBATCH --time=00:10:00
+#SBATCH --time=03:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=a100:1
-#SBATCH --mem=5GB
+#SBATCH --mem=10GB
 
 # remove all previously loaded modules
 module purge
@@ -63,5 +63,5 @@ python3 irof_sn_final_hbrk.py --method baseline --task sn
 ########### GET RESULTS
 
 # Save models by compressing and copying from TMPDIR
-mkdir -p /scratch/$USER/irof_new/sn/baseline/job_${SLURM_JOBID}
-tar czvf /scratch/$USER/irof_new/sn/baseline/job_${SLURM_JOBID}/results.tar.gz $TMPDIR/results
+mkdir -p /scratch/$USER/irof_new/sn/baseline/job_${SLURM_JOBID}_3hr
+tar czvf /scratch/$USER/irof_new/sn/baseline/job_${SLURM_JOBID}_3hr/results.tar.gz $TMPDIR/results
